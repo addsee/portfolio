@@ -137,6 +137,7 @@
     ];
 
     // دالة تحريك الزر لمكان عشوائي داخل حدود منطقة اللعب فقط
+        // دالة تحريك الزر مع ضمان الهروب لمسافة بعيدة
     function escapeBtn() {
       const spaceWidth = gameSpace.clientWidth;
       const spaceHeight = gameSpace.clientHeight;
@@ -144,16 +145,37 @@
       const btnWidth = runBtn.offsetWidth;
       const btnHeight = runBtn.offsetHeight;
 
-      // حساب أقصى إحداثيات مسموحة ليظل الزر كاملاً داخل الشاشة
       const maxX = spaceWidth - btnWidth;
       const maxY = spaceHeight - btnHeight;
 
-      const randomX = Math.max(10, Math.floor(Math.random() * maxX));
-      const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+      // الحصول على موقع الزر الحالي
+      const currentX = runBtn.offsetLeft;
+      const currentY = runBtn.offsetTop;
+
+      let randomX, randomY;
+
+      // إذا كان الزر في النصف الأيمن، اجمعه يهرب لالأيسر، والعكس صحيح
+      if (currentX > spaceWidth / 2) {
+        randomX = Math.max(10, Math.floor(Math.random() * (spaceWidth / 2 - btnWidth)));
+      } else {
+        randomX = Math.max(spaceWidth / 2, Math.floor(spaceWidth / 2 + Math.random() * (spaceWidth / 2 - btnWidth)));
+      }
+
+      // إذا كان الزر في النصف السفلي، اجمعه يهرب للعلوي، والعكس صحيح
+      if (currentY > spaceHeight / 2) {
+        randomY = Math.max(10, Math.floor(Math.random() * (spaceHeight / 2 - btnHeight)));
+      } else {
+        randomY = Math.max(spaceHeight / 2, Math.floor(spaceHeight / 2 + Math.random() * (spaceHeight / 2 - btnHeight)));
+      }
+
+      // التأكد من الحدود الإيجابية
+      randomX = Math.min(maxX, Math.max(10, randomX));
+      randomY = Math.min(maxY, Math.max(10, randomY));
 
       runBtn.style.left = randomX + 'px';
       runBtn.style.top = randomY + 'px';
     }
+
 
     // التعامل مع حدث اللمس للهاتف (يفضل اللمس الفوري قبل التثبيت)
     function handleTouch(e) {
