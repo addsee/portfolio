@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>استعراض الأرقام — النسخة الاحترافية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cairo:wght@400;600;800&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c14; --panel:#141a2b; --panel2:#1c2338; --line:#2a3350;
+  --gold:#ffc857; --coral:#ff5d73; --teal:#3ddc97; --violet:#8b7bff; --cream:#f4f1e8;
+}
+*{box-sizing:border-box;}
+body{margin:0;min-height:100vh;background:
+  radial-gradient(ellipse 60% 40% at 50% -10%, rgba(255,200,87,.08), transparent 60%),
+  radial-gradient(ellipse 80% 60% at 50% 110%, rgba(139,123,255,.10), transparent 60%),
+  var(--bg); color:var(--cream); font-family:'Cairo',sans-serif; display:flex; flex-direction:column; align-items:center; padding:26px 14px 60px;}
+.arcade{font-family:'Press Start 2P',monospace;}
+.mono{font-family:'Fira Code',monospace;}
+
+/* عنوان */
+.marquee{position:relative;padding:16px 30px;border-radius:14px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:2px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.5);text-align:center;margin-bottom:4px;}
+.marquee h1{margin:0;font-size:clamp(17px,2.6vw,25px);color:var(--gold);text-shadow:0 0 12px rgba(255,200,87,.55);}
+.marquee .sub{font-size:12.5px;color:#9aa3c0;margin-top:6px;}
+.bulbs{display:flex;justify-content:center;gap:6px;margin-top:9px;}
+.bulbs span{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:flicker 1.4s infinite ease-in-out;}
+.bulbs span:nth-child(3n){background:var(--coral);box-shadow:0 0 6px var(--coral);animation-delay:.2s;}
+.bulbs span:nth-child(5n){background:var(--teal);box-shadow:0 0 6px var(--teal);animation-delay:.4s;}
+@keyframes flicker{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+/* لوحة التحكم */
+.console{margin-top:18px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 18px;max-width:960px;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:#9aa3c0;}
+input[type=text]{padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:#0f1422;color:var(--cream);font-family:Cairo;font-size:13.5px;width:210px;outline:none;}
+input[type=text]:focus{border-color:var(--gold);}
+select{padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:#0f1422;color:var(--cream);font-family:Cairo;font-size:13px;outline:none;cursor:pointer;}
+input[type=range]{width:120px;accent-color:var(--gold);}
+.btn{padding:9px 16px;border-radius:9px;border:none;cursor:pointer;font-family:Cairo;font-weight:800;font-size:13.5px;transition:.2s transform;}
+.btn:hover{transform:translateY(-2px);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-main{background:linear-gradient(180deg,var(--gold),#e0a836);color:#241a04;box-shadow:0 6px 0 #a97c1f;}
+.btn-ghost{background:transparent;color:var(--cream);border:1px solid var(--line);}
+.btn-ghost:hover{border-color:var(--violet);color:var(--violet);}
+.icon-toggle{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0f1422;border:1px solid var(--line);cursor:pointer;font-size:15px;}
+.icon-toggle.off{opacity:.4;}
+.switch{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#9aa3c0;cursor:pointer;user-select:none;}
+.switch input{accent-color:var(--violet);width:16px;height:16px;}
+
+/* شرائح إعادة الترتيب */
+.chipsRow{display:flex;flex-wrap:wrap;gap:6px;max-width:960px;margin-top:10px;justify-content:center;}
+.chip{padding:6px 10px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);font-family:'Press Start 2P';font-size:11px;cursor:grab;user-select:none;color:var(--gold);}
+.chip.dragging{opacity:.4;}
+.chipsHint{font-size:10.5px;color:#6d7592;text-align:center;margin-top:2px;}
+
+/* تحكم التشغيل */
+.playback{display:none;gap:10px;margin-top:14px;}
+.playback.show{display:flex;}
+.pbtn{width:42px;height:42px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);color:var(--cream);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pbtn:hover{border-color:var(--gold);color:var(--gold);}
+.pbtn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* المسرح */
+.stage-wrap{position:relative;margin-top:22px;width:min(92vw,860px);}
+.curtain{position:absolute;top:-14px;bottom:-14px;width:60px;z-index:2;pointer-events:none;background:repeating-linear-gradient(90deg,#2a1030,#3a1642 8px,#24081f 16px);border-radius:10px;}
+.curtain.left{left:-20px;transform:skewY(1deg);}
+.curtain.right{right:-20px;transform:skewY(-1deg);}
+.stage{position:relative;height:280px;background:radial-gradient(circle at var(--spot-x,50%) 0%,rgba(255,200,87,.16),transparent 55%),linear-gradient(180deg,#131829,#0c0f1a 70%);border-radius:18px;border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.55) ,inset 0 0 40px rgba(0,0,0,.5);overflow:hidden;}
+.spotlight{position:absolute;top:-40%;width:170px;height:220%;left:var(--spot-x,50%);transform:translateX(-50%);background:conic-gradient(from 90deg at 50% 0%,transparent 20%,rgba(255,200,87,.10) 50%,transparent 80%);pointer-events:none;transition:left .7s cubic-bezier(.65,-.1,.35,1.1);z-index:1;}
+.ground{position:absolute;bottom:0;left:0;width:100%;height:58px;background:linear-gradient(180deg,#191f33,#0c0f1a);border-top:1px solid var(--line);}
+.balls-container{position:absolute;bottom:58px;left:0;width:100%;height:200px;display:flex;justify-content:center;align-items:flex-end;gap:18px;z-index:3;}
+.slot{display:flex;flex-direction:column;align-items:center;}
+.pedestal{width:50px;height:11px;border-radius:3px;background:linear-gradient(180deg,#3a4260,#20263c);}
+.ball{width:48px;height:48px;border-radius:50%;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P';font-size:12.5px;background:radial-gradient(circle at 32% 28%,#fdf6e3,#d8cdb0 55%,#b8ac8c);color:#2b2410;box-shadow:0 8px 16px rgba(0,0,0,.45);position:relative;will-change:transform;}
+.ball .star{position:absolute;top:-9px;right:-7px;font-size:12px;opacity:0;transform:scale(.3) rotate(-30deg);transition:.35s;}
+.ball.sorted{background:radial-gradient(circle at 32% 28%,#eafff2,#8ff0c1 55%,#34c98a);color:#08321f;box-shadow:0 0 18px rgba(61,220,151,.65);}
+.ball.sorted .star{opacity:1;transform:scale(1) rotate(0deg);}
+.ball.compare{background:radial-gradient(circle at 32% 28%,#fff6df,#ffd479 55%,#e0a836);box-shadow:0 0 22px rgba(255,200,87,.85);transform:translateY(-6px);}
+.ball.swap{background:radial-gradient(circle at 32% 28%,#ffe3e8,#ff8fa0 55%,#ff5d73);color:#3a0410;box-shadow:0 0 26px rgba(255,93,115,.9);}
+.ball.pivot{outline:3px solid var(--violet);outline-offset:3px;}
+.beam{position:absolute;height:2px;z-index:2;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .2s;pointer-events:none;}
+.beam.on{opacity:.8;}
+.stickman{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);transition:left .7s cubic-bezier(.65,-.1,.35,1.1);z-index:4;width:26px;}
+.head{width:18px;height:18px;border:3px solid var(--cream);border-radius:50%;margin:0 auto;}
+.torso{width:3px;height:28px;background:var(--cream);margin:0 auto;position:relative;}
+.arm-l,.arm-r{position:absolute;width:17px;height:3px;background:var(--cream);top:4px;transform-origin:0 50%;transition:.35s;border-radius:2px;}
+.arm-l{left:1px;transform:rotate(-135deg);}
+.arm-r{right:1px;transform:rotate(135deg) scaleX(-1);}
+.leg-l,.leg-r{position:absolute;width:15px;height:3px;background:var(--cream);bottom:0;transform-origin:0 50%;border-radius:2px;}
+.leg-l{left:1px;transform:rotate(115deg);}
+.leg-r{right:1px;transform:rotate(-115deg) scaleX(-1);}
+.stickman.walking .leg-l{animation:walkL .36s infinite ease-in-out;}
+.stickman.walking .leg-r{animation:walkR .36s infinite ease-in-out;}
+@keyframes walkL{0%,100%{transform:rotate(115deg);}50%{transform:rotate(70deg);}}
+@keyframes walkR{0%,100%{transform:rotate(-115deg) scaleX(-1);}50%{transform:rotate(-70deg) scaleX(-1);}}
+.stickman.lifting .arm-l{transform:rotate(-40deg);}
+.stickman.lifting .arm-r{transform:rotate(40deg) scaleX(-1);}
+.stickman.bounce{animation:bounceUp .35s ease;}
+@keyframes bounceUp{0%{transform:translateX(-50%) translateY(0);}40%{transform:translateX(-50%) translateY(-13px);}100%{transform:translateX(-50%) translateY(0);}}
+
+/* مسرح السباق */
+.race-wrap{width:min(92vw,860px);margin-top:16px;display:none;}
+.race-wrap.show{display:block;}
+.race-title{font-size:12px;color:var(--violet);margin-bottom:6px;text-align:center;}
+.race-stage{height:190px;background:linear-gradient(180deg,#131829,#0c0f1a 70%);border:1px solid var(--line);border-radius:14px;display:flex;align-items:flex-end;justify-content:center;gap:10px;padding:10px;position:relative;overflow:hidden;}
+.bar-slot{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.bar-val{font-family:'Press Start 2P';font-size:9px;margin-bottom:4px;color:var(--cream);}
+.bar{width:26px;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,#9d8fff,#6a5bd6);transition:height .3s ease, background .2s ease, transform .2s ease;box-shadow:0 4px 10px rgba(0,0,0,.4);}
+.bar.compare{background:linear-gradient(180deg,#ffe3a0,#e0a836);}
+.bar.swap{background:linear-gradient(180deg,#ff9fae,#ff5d73);transform:scaleY(1.05);}
+.bar.sorted{background:linear-gradient(180deg,#8ff0c1,#34c98a);}
+
+/* لوحات جانبية */
+.panels{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:960px;width:100%;margin-top:18px;}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;flex:1;min-width:260px;}
+.panel h3{margin:0 0 10px;font-size:12px;color:var(--gold);letter-spacing:.5px;}
+.pseudo{margin:0;font-size:12.5px;line-height:1.9;color:#9aa3c0;direction:ltr;text-align:left;}
+.pseudo div{padding:2px 8px;border-radius:5px;white-space:pre;}
+.pseudo div.active{background:rgba(255,200,87,.14);color:var(--gold);}
+.chart-canvas{width:100%;height:90px;display:block;}
+.log{height:150px;overflow-y:auto;font-size:12px;color:#c3c9e0;display:flex;flex-direction:column-reverse;}
+.log div{padding:3px 0;border-bottom:1px dashed rgba(255,255,255,.05);}
+
+/* إحصاءات وإنجازات */
+.stats{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 15px;min-width:100px;text-align:center;}
+.stat .num{font-family:'Press Start 2P';font-size:15px;color:var(--gold);}
+.stat .lbl{font-size:10.5px;color:#9aa3c0;margin-top:3px;}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px;}
+.badge{padding:7px 13px;border-radius:20px;background:linear-gradient(135deg,var(--violet),#5d4fd6);font-size:11.5px;font-weight:800;box-shadow:0 4px 10px rgba(139,123,255,.4);opacity:0;transform:translateY(8px) scale(.8);animation:badgeIn .4s forwards;}
+@keyframes badgeIn{to{opacity:1;transform:translateY(0) scale(1);}}
+.banner{margin-top:14px;font-family:'Press Start 2P';font-size:14px;color:var(--teal);text-align:center;min-height:20px;opacity:0;transition:opacity .4s;}
+.banner.show{opacity:1;}
+.flash{position:fixed;inset:0;background:var(--teal);opacity:0;pointer-events:none;z-index:99;}
+@media(max-width:640px){.stage{height:230px;}.ball{width:38px;height:38px;font-size:10px;}}
+</style>
+</head>
+<body>
+<canvas id="fxCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:60;"></canvas>
+<div class="flash" id="flash"></div>
+
+<div class="marquee">
+  <h1>استعراض الأرقام — الاحترافية</h1>
+  <div class="sub">اختر الخوارزمية، شاهد الكود وهو يُنفَّذ، واسمع لحن الترتيب</div>
+  <div class="bulbs" id="bulbs"></div>
+</div>
+
+<div class="console">
+  <div class="field">
+    <label>أرقام مفصولة بمسافة</label>
+    <input type="text" id="numberInput" value="90 68 45 12 77 33" oninput="rebuildChips()">
+  </div>
+  <div class="field">
+    <label>الخوارزمية</label>
+    <select id="algoSelect">
+      <option value="bubble">فقاعي Bubble</option>
+      <option value="selection">اختيار Selection</option>
+      <option value="insertion">إدراج Insertion</option>
+      <option value="quick">سريع Quick</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>سرعة العرض</label>
+    <input type="range" id="speed" min="1" max="4" value="2">
+  </div>
+  <button class="btn btn-main" id="startBtn" onclick="startSorting()">ابدأ الاستعراض</button>
+  <button class="btn btn-ghost" onclick="randomize()">أرقام عشوائية</button>
+  <div class="icon-toggle" id="soundToggle" onclick="toggleSound()" title="الصوت">🔊</div>
+  <label class="switch"><input type="checkbox" id="raceToggle" onchange="onRaceToggle()">وضع السباق ⚔️</label>
+  <div class="field" id="raceAlgoField" style="display:none;">
+    <label>خوارزمية المنافس</label>
+    <select id="raceAlgoSelect">
+      <option value="selection">اختيار Selection</option>
+      <option value="bubble">فقاعي Bubble</option>
+      <option value="insertion">إدراج Insertion</option>
+      <option value="quick">سريع Quick</option>
+    </select>
+  </div>
+</div>
+
+<div class="chipsRow" id="chipsRow"></div>
+<div class="chipsHint">اسحب الشرائح لإعادة ترتيب الأرقام قبل البدء</div>
+
+<div class="playback" id="playback">
+  <button class="pbtn" id="stepBackBtn" onclick="stepBack()" title="خطوة للخلف">⏮</button>
+  <button class="pbtn" id="pauseBtn" onclick="togglePause()" title="إيقاف/استئناف">⏸</button>
+  <button class="pbtn" id="stepFwdBtn" onclick="stepForward()" title="خطوة للأمام">⏭</button>
+</div>
+
+<div class="stage-wrap">
+  <div class="curtain left"></div><div class="curtain right"></div>
+  <div class="stage" id="stage">
+    <div class="spotlight" id="spotlight"></div>
+    <div class="beam" id="beam"></div>
+    <div class="stickman" id="stickman">
+      <div class="head"></div>
+      <div class="torso"><div class="arm-l"></div><div class="arm-r"></div><div class="leg-l"></div><div class="leg-r"></div></div>
+    </div>
+    <div class="balls-container" id="ballsContainer"></div>
+    <div class="ground"></div>
+  </div>
+</div>
+
+<div class="race-wrap" id="raceWrap">
+  <div class="race-title" id="raceTitle">مسرح المنافس</div>
+  <div class="race-stage" id="raceStage"></div>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <h3>الكود الزائف — تنفيذ حي</h3>
+    <div class="pseudo" id="pseudoBox"></div>
+  </div>
+  <div class="panel">
+    <h3>عدد المقارنات لحظيًا</h3>
+    <canvas class="chart-canvas" id="chartCanvas"></canvas>
+  </div>
+  <div class="panel">
+    <h3>سجل الأحداث</h3>
+    <div class="log" id="logBox"></div>
+  </div>
+</div>
+
+<div class="banner" id="banner"></div>
+<div class="stats">
+  <div class="stat"><div class="num" id="cmpCount">0</div><div class="lbl">مقارنات</div></div>
+  <div class="stat"><div class="num" id="swapCount">0</div><div class="lbl">تبديلات</div></div>
+  <div class="stat"><div class="num" id="timeCount">0.0s</div><div class="lbl">الزمن</div></div>
+</div>
+<div class="badges" id="badges"></div>
+
+<script>
+/* ============== إعداد عام ============== */
+const bulbs=document.getElementById('bulbs');
+for(let i=0;i<14;i++){const b=document.createElement('span');b.style.animationDelay=(i*.08)+'s';bulbs.appendChild(b);}
+
+let audioCtx=null, soundOn=true;
+function ensureCtx(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
+const SCALE=[261.63,293.66,329.63,392.00,440.00,523.25,587.33,659.25,783.99,880.00];
+function noteFor(value,maxVal){ const idx=Math.max(0,Math.min(SCALE.length-1,Math.floor((value/maxVal)*(SCALE.length-1)))); return SCALE[idx]; }
+function beep(freq,dur,type='sine',vol=0.05){
+  if(!soundOn) return; ensureCtx();
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type=type; o.frequency.value=freq; g.gain.value=vol;
+  o.connect(g); g.connect(audioCtx.destination); o.start();
+  g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime+dur);
+  o.stop(audioCtx.currentTime+dur);
+}
+function toggleSound(){ soundOn=!soundOn; const el=document.getElementById('soundToggle'); el.textContent=soundOn?'🔊':'🔇'; el.classList.toggle('off',!soundOn); }
+
+let speedMult=2;
+document.getElementById('speed').addEventListener('input', e=> speedMult=Number(e.target.value));
+function T(ms){ return ms/speedMult; }
+
+/* ============== شرائح إعادة الترتيب ============== */
+let chipOrder=[];
+function rebuildChips(){
+  const nums=document.getElementById('numberInput').value.trim().split(/\s+/).filter(Boolean).map(Number);
+  chipOrder = nums.filter(n=>!isNaN(n));
+  renderChips();
+}
+function renderChips(){
+  const row=document.getElementById('chipsRow'); row.innerHTML='';
+  chipOrder.forEach((val,idx)=>{
+    const c=document.createElement('div'); c.className='chip'; c.draggable=true; c.textContent=val; c.dataset.idx=idx;
+    c.addEventListener('dragstart', e=>{ c.classList.add('dragging'); e.dataTransfer.setData('text/plain', idx); });
+    c.addEventListener('dragend', ()=> c.classList.remove('dragging'));
+    c.addEventListener('dragover', e=> e.preventDefault());
+    c.addEventListener('drop', e=>{
+      e.preventDefault();
+      const from=Number(e.dataTransfer.getData('text/plain'));
+      const to=Number(c.dataset.idx);
+      const moved=chipOrder.splice(from,1)[0];
+      chipOrder.splice(to,0,moved);
+      renderChips();
+    });
+    row.appendChild(c);
+  });
+}
+rebuildChips();
+
+function randomize(){
+  const n=5+Math.floor(Math.random()*4);
+  const arr=Array.from({length:n}, ()=>1+Math.floor(Math.random()*98));
+  document.getElementById('numberInput').value=arr.join(' ');
+  rebuildChips();
+}
+
+/* ============== خوارزميات المحاكاة (تولّد قائمة خطوات) ============== */
+const PSEUDOCODE={
+  bubble:["for i in 0..n-2:","  for j in 0..n-2-i:","    if a[j] > a[j+1]:","      swap(a[j], a[j+1])","  # a[n-1-i] مستقر"],
+  selection:["for i in 0..n-2:","  min = i","  for j in i+1..n-1:","    if a[j] < a[min]: min = j","  swap(a[i], a[min])"],
+  insertion:["for i in 1..n-1:","  j = i","  while j>0 and a[j-1]>a[j]:","    swap(a[j-1], a[j]); j--","  # مُدرج في مكانه"],
+  quick:["pivot = a[high]","for j in low..high-1:","  if a[j] <= pivot: swap(i, j); i++","swap(i+1, high)  # وضع المحور","recurse(low,p-1); recurse(p+1,high)"]
+};
+function simulateBubble(arr){
+  const a=[...arr], steps=[], n=a.length;
+  for(let i=0;i<n-1;i++){
+    for(let j=0;j<n-1-i;j++){
+      steps.push({type:'compare',i:j,j:j+1,line:2,note:`مقارنة ${a[j]} و ${a[j+1]}`});
+      if(a[j]>a[j+1]){ steps.push({type:'swap',i:j,j:j+1,line:3,note:`تبديل ${a[j]} و ${a[j+1]}`}); [a[j],a[j+1]]=[a[j+1],a[j]]; }
+    }
+    steps.push({type:'sorted',i:n-1-i,line:4,note:`${a[n-1-i]} استقر في مكانه`});
+  }
+  steps.push({type:'sorted',i:0,line:4,note:`${a[0]} استقر في مكانه`});
+  return steps;
+}
+function simulateSelection(arr){
+  const a=[...arr], steps=[], n=a.length;
+  for(let i=0;i<n-1;i++){
+    let min=i;
+    for(let j=i+1;j<n;j++){
+      steps.push({type:'compare',i:j,j:min,line:3,note:`مقارنة ${a[j]} مع الأصغر ${a[min]}`});
+      if(a[j]<a[min]) min=j;
+    }
+    if(min!==i){ steps.push({type:'swap',i:i,j:min,line:4,note:`تبديل ${a[i]} و ${a[min]}`}); [a[i],a[min]]=[a[min],a[i]]; }
+    steps.push({type:'sorted',i:i,line:4,note:`${a[i]} استقر في مكانه`});
+  }
+  steps.push({type:'sorted',i:n-1,line:4});
+  return steps;
+}
+function simulateInsertion(arr){
+  const a=[...arr], steps=[], n=a.length;
+  for(let i=1;i<n;i++){
+    let j=i;
+    while(j>0){
+      steps.push({type:'compare',i:j-1,j:j,line:2,note:`مقارنة ${a[j-1]} و ${a[j]}`});
+      if(a[j-1]>a[j]){ steps.push({type:'swap',i:j-1,j:j,line:3,note:`إزاحة ${a[j-1]} لليمين`}); [a[j-1],a[j]]=[a[j],a[j-1]]; j--; }
+      else break;
+    }
+  }
+  for(let k=0;k<n;k++) steps.push({type:'sorted',i:k,line:4});
+  return steps;
+}
+function simulateQuick(arr){
+  const a=[...arr], steps=[];
+  function partition(low,high){
+    const pivot=a[high];
+    steps.push({type:'pivot',i:high,line:0,note:`المحور المختار: ${pivot}`});
+    let i=low-1;
+    for(let j=low;j<high;j++){
+      steps.push({type:'compare',i:j,j:high,line:1,note:`مقارنة ${a[j]} بالمحور ${pivot}`});
+      if(a[j]<=pivot){ i++; if(i!==j){ steps.push({type:'swap',i:i,j:j,line:2,note:`تبديل ${a[i]} و ${a[j]}`}); [a[i],a[j]]=[a[j],a[i]]; } }
+    }
+    if(i+1!==high){ steps.push({type:'swap',i:i+1,j:high,line:3,note:`وضع المحور في مكانه`}); [a[i+1],a[high]]=[a[high],a[i+1]]; }
+    steps.push({type:'sorted',i:i+1,line:3,note:`${a[i+1]} استقر في مكانه`});
+    return i+1;
+  }
+  function qs(low,high){
+    if(low<high){ const p=partition(low,high); qs(low,p-1); qs(p+1,high); }
+    else if(low===high){ steps.push({type:'sorted',i:low,line:4}); }
+  }
+  if(a.length>0) qs(0,a.length-1);
+  return steps;
+}
+function simulate(algo,arr){
+  if(algo==='bubble') return simulateBubble(arr);
+  if(algo==='selection') return simulateSelection(arr);
+  if(algo==='insertion') return simulateInsertion(arr);
+  if(algo==='quick') return simulateQuick(arr);
+}
+
+/* ============== لوحة الكود الزائف ============== */
+function renderPseudocode(algo){
+  const box=document.getElementById('pseudoBox'); box.innerHTML='';
+  PSEUDOCODE[algo].forEach((line,idx)=>{
+    const d=document.createElement('div'); d.textContent=line; d.id='pline-'+idx;
+    box.appendChild(d);
+  });
+}
+function highlightLine(algo,line){
+  document.querySelectorAll('#pseudoBox div').forEach(d=>d.classList.remove('active'));
+  const el=document.getElementById('pline-'+line);
+  if(el) el.classList.add('active');
+}
+
+/* ============== سجل الأحداث ============== */
+function logEvent(text){
+  const box=document.getElementById('logBox');
+  const d=document.createElement('div'); d.textContent=text;
+  box.prepend(d);
+  while(box.children.length>200) box.removeChild(box.lastChild);
+}
+
+/* ============== الرسم البياني الحي ============== */
+let chartPoints=[];
+function resetChart(){ chartPoints=[]; drawChart(); }
+function pushChart(val){ chartPoints.push(val); drawChart(); }
+function drawChart(){
+  const cv=document.getElementById('chartCanvas');
+  const ctx=cv.getContext('2d');
+  const w=cv.clientWidth, h=cv.clientHeight;
+  cv.width=w*devicePixelRatio; cv.height=h*devicePixelRatio;
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  ctx.clearRect(0,0,w,h);
+  if(chartPoints.length<2){ return; }
+  const max=Math.max(...chartPoints,1);
+  ctx.beginPath();
+  chartPoints.forEach((p,i)=>{
+    const x=(i/(chartPoints.length-1))*w;
+    const y=h-(p/max)*(h-10)-5;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#ffc857'; ctx.lineWidth=2; ctx.stroke();
+  ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+  ctx.fillStyle='rgba(255,200,87,0.08)'; ctx.fill();
+}
+
+/* ============== حالة اللعبة الرئيسية ============== */
+let mainState=null; // {array, steps, pointer, balls...}
+let comparisons=0, swaps=0, startTs=0, timerHandle=null, maxValue=1;
+let paused=false, pauseResolver=null, stepModeOnce=false;
+let finished=false;
+
+function resetStats(){
+  comparisons=0; swaps=0;
+  document.getElementById('cmpCount').textContent='0';
+  document.getElementById('swapCount').textContent='0';
+  document.getElementById('timeCount').textContent='0.0s';
+  document.getElementById('banner').classList.remove('show'); document.getElementById('banner').textContent='';
+  document.getElementById('badges').innerHTML='';
+  document.getElementById('logBox').innerHTML='';
+  resetChart();
+}
+function startTimer(){ startTs=performance.now(); clearInterval(timerHandle);
+  timerHandle=setInterval(()=>{ document.getElementById('timeCount').textContent=((performance.now()-startTs)/1000).toFixed(1)+'s'; },100);
+}
+function stopTimer(){ clearInterval(timerHandle); }
+
+/* ============== إنشاء الكرات ============== */
+function createBalls(numbers){
+  const container=document.getElementById('ballsContainer'); container.innerHTML='';
+  numbers.forEach((num,i)=>{
+    const slot=document.createElement('div'); slot.className='slot';
+    const ball=document.createElement('div'); ball.className='ball'; ball.textContent=num; ball.dataset.value=num;
+    ball.style.opacity='0'; ball.style.transform='translateY(-40px) scale(.6)';
+    const ped=document.createElement('div'); ped.className='pedestal';
+    slot.appendChild(ball); slot.appendChild(ped); container.appendChild(slot);
+    setTimeout(()=>{ ball.style.transition='opacity .4s ease, transform .5s cubic-bezier(.34,1.56,.64,1)'; ball.style.opacity='1'; ball.style.transform='translateY(0) scale(1)'; }, i*60);
+  });
+}
+
+/* ============== حركة الشخصية ============== */
+function moveStickmanToIndices(indices){
+  return new Promise(resolve=>{
+    const stickman=document.getElementById('stickman');
+    const balls=document.querySelectorAll('.ball'); const stage=document.getElementById('stage');
+    if(!balls.length) return resolve();
+    const rects=indices.map(idx=>balls[idx].getBoundingClientRect());
+    const stageRect=stage.getBoundingClientRect();
+    const avgX=rects.reduce((s,r)=>s+(r.left+r.width/2),0)/rects.length;
+    const relX=(avgX-stageRect.left)/stageRect.width*100;
+    stickman.classList.add('walking'); stickman.style.left=relX+'%';
+    document.getElementById('spotlight').style.setProperty('--spot-x',relX+'%');
+    document.getElementById('stage').style.setProperty('--spot-x',relX+'%');
+    setTimeout(()=>{
+      stickman.classList.remove('walking'); stickman.classList.add('bounce');
+      setTimeout(()=>stickman.classList.remove('bounce'),300);
+      resolve();
+    }, T(600));
+  });
+}
+function drawBeam(i1,i2,on){
+  const beam=document.getElementById('beam'); if(!on){ beam.classList.remove('on'); return; }
+  const balls=document.querySelectorAll('.ball'); const stage=document.getElementById('stage');
+  const r1=balls[i1].getBoundingClientRect(), r2=balls[i2].getBoundingClientRect(), sr=stage.getBoundingClientRect();
+  const x1=r1.left+r1.width/2-sr.left, x2=r2.left+r2.width/2-sr.left, y=r1.top-sr.top+r1.height/2;
+  beam.style.left=Math.min(x1,x2)+'px'; beam.style.top=y+'px'; beam.style.width=Math.abs(x2-x1)+'px'; beam.classList.add('on');
+}
+
+/* ============== تبديل مرئي بمسار قوسي ============== */
+function animateSwap(i1,i2){
+  return new Promise(resolve=>{
+    const balls=document.querySelectorAll('.ball'); const a=balls[i1], b=balls[i2];
+    const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect(); const dx=rb.left-ra.left;
+    a.classList.add('swap'); b.classList.add('swap'); document.getElementById('stickman').classList.add('lifting');
+    const va=Number(a.dataset.value), vb=Number(b.dataset.value);
+    beep(noteFor(va,maxValue),.14,'square',.05);
+    setTimeout(()=>beep(noteFor(vb,maxValue),.14,'square',.05), T(110));
+    const dur=T(480);
+    const upA=[{transform:'translate(0,0)'},{transform:`translate(${dx*.5}px,-36px)`},{transform:`translate(${dx}px,0)`}];
+    const upB=[{transform:'translate(0,0)'},{transform:`translate(${-dx*.5}px,-36px)`},{transform:`translate(${-dx}px,0)`}];
+    const opts={duration:dur, easing:'cubic-bezier(.34,1.56,.64,1)'};
+    Promise.all([a.animate(upA,opts).finished, b.animate(upB,opts).finished]).then(()=>{
+      const tt=a.textContent, tv=a.dataset.value;
+      a.textContent=b.textContent; a.dataset.value=b.dataset.value;
+      b.textContent=tt; b.dataset.value=tv;
+      a.style.transform=''; b.style.transform='';
+      a.classList.remove('swap'); b.classList.remove('swap');
+      document.getElementById('stickman').classList.remove('lifting');
+      resolve();
+    });
+  });
+}
+
+/* ============== محرك تشغيل الخطوات (رئيسي) ============== */
+function waitIfPaused(){
+  if(!paused) return Promise.resolve();
+  return new Promise(res=>{ pauseResolver=res; });
+}
+function togglePause(){
+  paused=!paused;
+  document.getElementById('pauseBtn').textContent = paused?'▶':'⏸';
+  if(!paused && pauseResolver){ pauseResolver(); pauseResolver=null; }
+}
+function stepForward(){
+  if(!paused){ paused=true; document.getElementById('pauseBtn').textContent='▶'; }
+  stepModeOnce=true;
+  if(pauseResolver){ pauseResolver(); pauseResolver=null; }
+}
+async function stepBack(){
+  if(!mainState) return;
+  if(!paused) togglePause();
+  if(mainState.pointer<=0) return;
+  mainState.pointer -= 1;
+  await rebuildToPointer(mainState.pointer);
+}
+async function rebuildToPointer(target){
+  // إعادة بناء الحالة المرئية بسرعة دون صوت أو تأخير حتى نقطة معينة
+  const numbers = mainState.original.slice();
+  createBallsInstant(numbers);
+  comparisons=0; swaps=0;
+  document.getElementById('logBox').innerHTML=''; resetChart();
+  for(let p=0;p<target;p++){
+    applyStepInstant(mainState.steps[p]);
+  }
+  document.getElementById('cmpCount').textContent=comparisons;
+  document.getElementById('swapCount').textContent=swaps;
+  if(mainState.steps[target]) highlightLine(mainState.algo, mainState.steps[target].line);
+}
+function createBallsInstant(numbers){
+  const container=document.getElementById('ballsContainer'); container.innerHTML='';
+  numbers.forEach(num=>{
+    const slot=document.createElement('div'); slot.className='slot';
+    const ball=document.createElement('div'); ball.className='ball'; ball.textContent=num; ball.dataset.value=num;
+    const ped=document.createElement('div'); ped.className='pedestal';
+    slot.appendChild(ball); slot.appendChild(ped); container.appendChild(slot);
+  });
+}
+function applyStepInstant(step){
+  const balls=document.querySelectorAll('.ball');
+  if(step.type==='compare'){ comparisons++; }
+  if(step.type==='swap'){
+    swaps++;
+    const a=balls[step.i], b=balls[step.j];
+    const tt=a.textContent, tv=a.dataset.value; a.textContent=b.textContent; a.dataset.value=b.dataset.value; b.textContent=tt; b.dataset.value=tv;
+  }
+  if(step.type==='sorted'){ balls[step.i].classList.add('sorted'); if(!balls[step.i].querySelector('.star')){ const s=document.createElement('span'); s.className='star'; s.textContent='★'; balls[step.i].appendChild(s);} }
+}
+
+async function playMain(){
+  const {steps, algo}=mainState;
+  while(mainState.pointer < steps.length){
+    await waitIfPaused();
+    if(stepModeOnce) stepModeOnce=false;
+    const step=steps[mainState.pointer];
+    highlightLine(algo, step.line);
+
+    if(step.type==='pivot'){
+      const balls=document.querySelectorAll('.ball');
+      await moveStickmanToIndices([step.i]);
+      balls[step.i].classList.add('pivot');
+      logEvent(step.note); 
+      await new Promise(r=>setTimeout(r, T(350)));
+    } else if(step.type==='compare'){
+      await moveStickmanToIndices([step.i, step.j]);
+      const balls=document.querySelectorAll('.ball');
+      balls[step.i].classList.add('compare'); balls[step.j].classList.add('compare');
+      drawBeam(step.i, step.j, true);
+      comparisons++; document.getElementById('cmpCount').textContent=comparisons; pushChart(comparisons);
+      beep(noteFor(Number(balls[step.i].dataset.value),maxValue),.09,'sine',.045);
+      logEvent(step.note);
+      await new Promise(r=>setTimeout(r, T(420)));
+      balls[step.i].classList.remove('compare'); balls[step.j].classList.remove('compare');
+      drawBeam(0,0,false);
+    } else if(step.type==='swap'){
+      await animateSwap(step.i, step.j);
+      swaps++; document.getElementById('swapCount').textContent=swaps;
+      logEvent(step.note);
+    } else if(step.type==='sorted'){
+      const balls=document.querySelectorAll('.ball');
+      balls[step.i].classList.remove('pivot');
+      balls[step.i].classList.add('sorted');
+      if(!balls[step.i].querySelector('.star')){ const s=document.createElement('span'); s.className='star'; s.textContent='★'; balls[step.i].appendChild(s); }
+      if(step.note) logEvent(step.note);
+    }
+    mainState.pointer++;
+    if(paused && !stepModeOnce){ await waitIfPaused(); }
+  }
+  document.getElementById('stickman').style.left='50%';
+  document.getElementById('spotlight').style.setProperty('--spot-x','50%');
+}
+
+/* ============== وضع السباق (مسرح ثانوي مبسّط) ============== */
+let raceState=null;
+function onRaceToggle(){
+  const on=document.getElementById('raceToggle').checked;
+  document.getElementById('raceAlgoField').style.display = on?'flex':'none';
+  document.getElementById('raceWrap').classList.toggle('show', on);
+}
+function createRaceBars(numbers){
+  const stage=document.getElementById('raceStage'); stage.innerHTML='';
+  const max=Math.max(...numbers,1);
+  numbers.forEach(v=>{
+    const slot=document.createElement('div'); slot.className='bar-slot';
+    const label=document.createElement('div'); label.className='bar-val'; label.textContent=v;
+    const bar=document.createElement('div'); bar.className='bar'; bar.dataset.value=v;
+    bar.style.height=(20+(v/max)*140)+'px';
+    slot.appendChild(label); slot.appendChild(bar); stage.appendChild(slot);
+  });
+}
+async function playRace(algo, numbers){
+  const steps=simulate(algo, numbers);
+  const max=Math.max(...numbers,1);
+  for(let p=0;p<steps.length;p++){
+    const step=steps[p];
+    const bars=document.querySelectorAll('#raceStage .bar');
+    const labels=document.querySelectorAll('#raceStage .bar-val');
+    if(step.type==='compare'){
+      bars[step.i].classList.add('compare'); bars[step.j].classList.add('compare');
+      await new Promise(r=>setTimeout(r, T(300)));
+      bars[step.i].classList.remove('compare'); bars[step.j].classList.remove('compare');
+    } else if(step.type==='swap'){
+      bars[step.i].classList.add('swap'); bars[step.j].classList.add('swap');
+      await new Promise(r=>setTimeout(r, T(200)));
+      const hv=bars[step.i].style.height, dv=bars[step.i].dataset.value, lv=labels[step.i].textContent;
+      bars[step.i].style.height=bars[step.j].style.height; bars[step.i].dataset.value=bars[step.j].dataset.value; labels[step.i].textContent=labels[step.j].textContent;
+      bars[step.j].style.height=hv; bars[step.j].dataset.value=dv; labels[step.j].textContent=lv;
+      await new Promise(r=>setTimeout(r, T(150)));
+      bars[step.i].classList.remove('swap'); bars[step.j].classList.remove('swap');
+    } else if(step.type==='sorted'){
+      bars[step.i].classList.add('sorted');
+    } else if(step.type==='pivot'){
+      bars[step.i].classList.add('compare');
+      await new Promise(r=>setTimeout(r, T(250)));
+      bars[step.i].classList.remove('compare');
+    }
+  }
+  return {steps: steps.length};
+}
+
+/* ============== الإنجازات ============== */
+function computeAchievements(n, timeSec, cmp, sw, raceWon){
+  const list=[];
+  if(timeSec < n*0.9) list.push('⚡ عرض سريع');
+  if(sw <= Math.ceil(n*0.6)) list.push('🎯 تبديلات مقتصدة');
+  if(cmp>0) list.push('🧠 اكتمل التحليل');
+  if(raceWon===true) list.push('🏆 الأسرع في السباق');
+  if(raceWon===false) list.push('🥈 أنهى السباق');
+  return list;
+}
+function showBadges(list){
+  const box=document.getElementById('badges'); box.innerHTML='';
+  list.forEach((b,i)=>{ const d=document.createElement('div'); d.className='badge'; d.textContent=b; d.style.animationDelay=(i*0.12)+'s'; box.appendChild(d); });
+}
+
+/* ============== قصاصات الاحتفال (Canvas) ============== */
+function celebrate(){
+  const cv=document.getElementById('fxCanvas'); const ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight;
+  const colors=['#ffc857','#ff5d73','#3ddc97','#8b7bff','#f4f1e8'];
+  const parts=Array.from({length:140}, ()=>({
+    x:Math.random()*cv.width, y:-20-Math.random()*200,
+    vx:(Math.random()-.5)*3, vy:2+Math.random()*3,
+    size:4+Math.random()*5, color:colors[Math.floor(Math.random()*colors.length)],
+    rot:Math.random()*360, vr:(Math.random()-.5)*10
+  }));
+  let frame=0;
+  function tick(){
+    frame++;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.02; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*1.6);
+      ctx.restore();
+    });
+    if(frame<160) requestAnimationFrame(tick); else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  tick();
+  const flash=document.getElementById('flash');
+  flash.style.transition='opacity .15s'; flash.style.opacity='.15';
+  setTimeout(()=>{ flash.style.opacity='0'; }, 180);
+}
+
+/* ============== بدء الاستعراض ============== */
+async function startSorting(){
+  const numbers = chipOrder.length ? chipOrder.slice() : document.getElementById('numberInput').value.trim().split(/\s+/).map(Number);
+  if(!numbers.length || numbers.some(isNaN)){ alert('الرجاء إدخال أرقام صحيحة مفصولة بمسافة.'); return; }
+  if(numbers.length>12){ alert('الرجاء إدخال 12 رقمًا كحد أقصى لأفضل استعراض.'); return; }
+
+  const algo=document.getElementById('algoSelect').value;
+  maxValue=Math.max(...numbers,1);
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('stickman').style.left='50%';
+  paused=false; stepModeOnce=false; document.getElementById('pauseBtn').textContent='⏸';
+  document.getElementById('playback').classList.add('show');
+  resetStats();
+  renderPseudocode(algo);
+  createBalls(numbers);
+  startTimer();
+
+  const raceOn=document.getElementById('raceToggle').checked;
+  let raceAlgo=null;
+  if(raceOn){ raceAlgo=document.getElementById('raceAlgoSelect').value; createRaceBars(numbers); document.getElementById('raceTitle').textContent='مسرح المنافس — '+raceAlgo; }
+
+  mainState={ algo, original:numbers.slice(), steps:simulate(algo,numbers), pointer:0 };
+
+  await new Promise(r=>setTimeout(r,600));
+
+  let mainTime=0, raceTime=0, raceStepCount=0;
+  const mainStart=performance.now();
+  const tasks=[ playMain().then(()=> mainTime=performance.now()-mainStart) ];
+  if(raceOn){
+    const raceStart=performance.now();
+    tasks.push(playRace(raceAlgo, numbers).then(res=>{ raceTime=performance.now()-raceStart; raceStepCount=res.steps; }));
+  }
+  await Promise.all(tasks);
+
+  stopTimer();
+  finished=true;
+  document.getElementById('playback').classList.remove('show');
+  const totalTime=(performance.now()-startTs)/1000;
+  const banner=document.getElementById('banner');
+  banner.textContent='🎉 تم الترتيب بنجاح! 🎉'; banner.classList.add('show');
+  [523,659,784,1046].forEach((f,idx)=> setTimeout(()=>beep(f,.25,'triangle',.05), idx*130));
+  celebrate();
+
+  let raceWon=null;
+  if(raceOn){ raceWon = mainTime <= raceTime; document.getElementById('raceTitle').textContent = `مسرح المنافس — ${raceAlgo} (${raceWon? 'خسر السباق':'فاز بالسباق'})`; }
+  const badges=computeAchievements(numbers.length, totalTime, comparisons, swaps, raceOn? raceWon : undefined);
+  showBadges(badges);
+
+  document.getElementById('startBtn').disabled=false;
+}
+</script>
+</body>
+</html>
