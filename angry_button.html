@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>لعبة المبرمج الغاضب</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      background: #090d16;
+      color: #ffffff;
+      font-family: system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+    }
+    
+    /* شاشة العداد والرسائل */
+    .status-area {
+      text-align: center;
+      margin-top: 20px;
+      z-index: 5;
+    }
+    .score {
+      font-size: 1.1rem;
+      color: #8b949e;
+      margin-bottom: 10px;
+    }
+    .score span {
+      color: #ff4a4a;
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+    .bubble {
+      background: #161b22;
+      border: 2px solid #30363d;
+      padding: 15px 20px;
+      border-radius: 20px;
+      font-size: 1.2rem;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 90%;
+      margin: 0 auto;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+
+    /* منطقة اللعب التي يهرب فيها الزر */
+    .game-space {
+      flex-grow: 1;
+      position: relative;
+      width: 100%;
+      margin: 20px 0;
+    }
+    /* الزر الهارب المصغر */
+    .run-btn {
+      position: absolute;
+      padding: 10px 18px; /* تم تقليل الحشوة الداخلية */
+      background: #ff4a4a;
+      color: white;
+      border: none;
+      border-radius: 30px; /* تم تعديل الانحناء ليناسب الحجم الجديد */
+      font-size: 0.95rem;  /* خط أصغر وأنسب */
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 74, 74, 0.4);
+      transition: left 0.12s ease-out, top 0.12s ease-out;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+
+    /* زر العودة للمركز */
+    .back-nav {
+      text-align: center;
+      margin-bottom: 10px;
+      z-index: 5;
+    }
+    .back-btn {
+      background: none;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      padding: 10px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="status-area">
+    <div class="score">المحاولات الفاشلة: <span id="attempts">0</span></div>
+    <div class="bubble" id="msgBubble">اضغط على الزر الأحمر إذا كنت سريعاً كفاية! 😉</div>
+  </div>
+
+  <div class="game-space" id="gameSpace">
+    <button class="run-btn" id="runBtn">اضغط هنا! 🔴</button>
+  </div>
+
+  <div class="back-nav">
+    <a href="index.html" class="back-btn">⬅ العودة للرئيسية</a>
+  </div>
+
+  <script>
+    const runBtn = document.getElementById('runBtn');
+    const gameSpace = document.getElementById('gameSpace');
+    const attemptsCtx = document.getElementById('attempts');
+    const msgBubble = document.getElementById('msgBubble');
+
+    let count = 0;
+
+    const quotes = [
+      "تؤ تؤ.. حاول مرة أخرى! 🤭",
+      "الـ Bug دا شغال في جهازي، مشكلتك! 🤷‍♂️",
+      "سريع.. بس مش أسرع من الـ Deadlock! 🛑",
+      "دا مش خطأ برمي، دي ميزة مضافة! 🛠️",
+      "نسيت السيمي كولون [ ; ] ولا إيه؟ 🧐",
+      "الزر هرب للـ Production خلاص! 🚀",
+      "أنت متأكد إنك مبرمج سنيور؟ 💻",
+      "جرب تعمل Restart لإصبعك! 🔄",
+      "ذاكرة الهاتف ممتلئة بالغضب! 🤯",
+      "باقي خطوة واحدة وتصيب الهدف.. أمزح! 🤣"
+    ];
+
+    // دالة تحريك الزر لمكان عشوائي داخل حدود منطقة اللعب فقط
+    function escapeBtn() {
+      const spaceWidth = gameSpace.clientWidth;
+      const spaceHeight = gameSpace.clientHeight;
+      
+      const btnWidth = runBtn.offsetWidth;
+      const btnHeight = runBtn.offsetHeight;
+
+      // حساب أقصى إحداثيات مسموحة ليظل الزر كاملاً داخل الشاشة
+      const maxX = spaceWidth - btnWidth;
+      const maxY = spaceHeight - btnHeight;
+
+      const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+
+      runBtn.style.left = randomX + 'px';
+      runBtn.style.top = randomY + 'px';
+    }
+
+    // التعامل مع حدث اللمس للهاتف (يفضل اللمس الفوري قبل التثبيت)
+    function handleTouch(e) {
+      e.preventDefault(); // منع تضخيم الشاشة أو السحب الافتراضي
+      count++;
+      attemptsCtx.textContent = count;
+      
+      // اختيار عبارة عشوائية
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      msgBubble.textContent = randomQuote;
+      
+      escapeBtn();
+    }
+
+    runBtn.addEventListener('touchstart', handleTouch);
+    runBtn.addEventListener('mousedown', handleTouch); // للدعم الفوري عند التجربة من حاسوب أيضاً
+
+    // تعيين موقع عشوائي بدئي عند فتح الصفحة
+    window.onload = escapeBtn;
+    window.addEventListener('resize', escapeBtn);
+  </script>
+</body>
+</html>
