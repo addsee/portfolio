@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>مختبر الكهرباء التفاعلي — إصدار موسّع</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141110; --panel:#221c17; --panel2:#2a231b; --edge:#3d3226;
+  --brass:#cda233; --brass-dim:#8a6f1d; --cream:#f0e6d2; --dim:#a8977e;
+  --red:#ff5a3c; --black-term:#2a2a2a;
+  --live:#ffb454; --live-glow:#ff8c2a;
+  --ok:#5fd86f; --warn:#ff5a3c; --amber:#ffb454;
+  --grid: rgba(201,162,51,0.06);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Rajdhani',sans-serif;color:var(--cream);display:flex;flex-direction:column;height:100vh;}
+
+header{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:8px 16px;background:linear-gradient(180deg,#241d15,#1b1610);
+  border-bottom:1px solid var(--edge); flex-shrink:0; z-index:60;
+}
+.brand{font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:.08em;color:var(--brass);font-size:.85rem;}
+.brand span{color:var(--dim);font-weight:400;}
+.hgroup{display:flex;gap:6px;align-items:center;}
+.hbtn{
+  height:28px;padding:0 9px;border-radius:6px;background:var(--panel2);border:1px solid var(--edge);
+  color:var(--cream);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;
+}
+.hbtn:hover{border-color:var(--brass);color:var(--brass);}
+.hbtn.active{border-color:var(--warn);color:var(--warn);}
+.zlabel{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--dim);min-width:36px;text-align:center;}
+
+.toolbox{
+  display:flex;gap:7px;padding:8px 14px;background:var(--panel);
+  border-bottom:1px solid var(--edge);overflow-x:auto;flex-shrink:0;z-index:50;
+}
+.tool{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:58px;padding:6px 5px;border-radius:8px;background:var(--panel2);
+  border:1px solid var(--edge);cursor:grab;touch-action:none;
+}
+.tool:hover{border-color:var(--brass);}
+.tool svg{width:26px;height:26px;}
+.tool .tl{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--dim);white-space:nowrap;}
+.tool:active{cursor:grabbing;}
+
+.workspace{flex:1;position:relative;overflow:hidden;background:var(--bg);cursor:grab;}
+.workspace.panning{cursor:grabbing;}
+.ws-inner{
+  position:absolute;top:0;left:0;width:2800px;height:1700px;transform-origin:0 0;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+svg#wireLayer{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;}
+.wire-line{fill:none;stroke:#6b5a42;stroke-width:5;stroke-linecap:round;pointer-events:stroke;cursor:pointer;transition:stroke .25s,filter .25s;}
+.wire-line.live{stroke:var(--live-glow);filter:drop-shadow(0 0 6px rgba(255,140,42,.8)) drop-shadow(0 0 14px rgba(255,140,42,.35));}
+.wire-temp{fill:none;stroke:var(--brass);stroke-width:4;stroke-dasharray:6 5;opacity:.85;}
+.wire-pulse{fill:#fff4d6;opacity:0;}
+.wire-pulse.live{opacity:1;}
+
+.comp{position:absolute;background:var(--panel);border:1px solid var(--edge);border-radius:10px;
+  box-shadow:0 10px 24px rgba(0,0,0,.45);z-index:10;}
+.comp.selected{outline:2px solid var(--brass); box-shadow:0 0 0 4px rgba(205,162,51,.25),0 10px 24px rgba(0,0,0,.45);}
+.comp.warn{animation:warnPulse 1s infinite;}
+@keyframes warnPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,90,60,.6);}50%{box-shadow:0 0 14px 4px rgba(255,90,60,.5);}}
+.comp .head{
+  height:20px;background:linear-gradient(180deg,#3a3020,#2a2216);border-bottom:1px solid var(--edge);
+  border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 5px;cursor:grab;touch-action:none;gap:3px;
+}
+.comp .head:active{cursor:grabbing;}
+.comp .head .t{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--brass);letter-spacing:.03em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hicon{width:14px;height:14px;border-radius:50%;font-size:9px;line-height:14px;text-align:center;cursor:pointer;opacity:0;transition:opacity .15s;flex-shrink:0;}
+.comp:hover .hicon{opacity:1;}
+.hicon.del{background:#4a2a20;color:#e8a;}
+.hicon.dup{background:#2a3a20;color:#bfe6a8;}
+.hicon.rot{background:#20303a;color:#a8d4e6;}
+.comp .body{position:relative;padding:6px 4px 16px;display:flex;flex-direction:column;align-items:center;gap:4px;height:calc(100% - 20px);}
+.art-wrap{transition:transform .2s ease;display:flex;align-items:center;justify-content:center;}
+
+.terminal{
+  position:absolute;width:15px;height:15px;border-radius:50%;transform:translate(-50%,-50%);
+  background:#8a8a8a;border:2px solid #1a1a1a;cursor:crosshair;z-index:20;
+  box-shadow:0 0 0 3px rgba(0,0,0,.25);
+}
+.terminal:hover{transform:translate(-50%,-50%) scale(1.3);}
+.terminal.pos{background:var(--red);}
+.terminal.neg{background:var(--black-term);}
+
+.mini-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--dim);text-align:center;line-height:1.3;}
+.mini-btn{font-family:'JetBrains Mono',monospace;font-size:.55rem;background:var(--panel2);border:1px solid var(--edge);color:var(--cream);border-radius:4px;padding:1px 6px;cursor:pointer;}
+.mini-btn:hover{border-color:var(--brass);}
+.preset-row{display:flex;gap:3px;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;background:var(--edge);border-radius:3px;outline:none;width:100%;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--brass);cursor:pointer;border:none;}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--brass);border:none;cursor:pointer;}
+
+.mm-screen{width:100%;background:#0e2a1e;border:1px solid #0a1f16;border-radius:4px;padding:4px 3px;
+  font-family:'JetBrains Mono',monospace;text-align:center;color:#7dffb0;font-size:.92rem;font-weight:700;
+  box-shadow:inset 0 0 8px rgba(0,0,0,.6);}
+.mm-unit{font-size:.52rem;color:#4fae7d;display:block;}
+
+#ghost{position:fixed;pointer-events:none;z-index:999;opacity:.85;transform:translate(-50%,-50%);display:none;}
+#ghost svg{width:34px;height:34px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5));}
+
+.spark{position:absolute;border-radius:50%;pointer-events:none;z-index:60;}
+.smoke{position:absolute;border-radius:50%;pointer-events:none;z-index:59;background:radial-gradient(circle,rgba(120,110,100,.5),transparent 70%);}
+
+.statusbar{
+  padding:5px 14px;background:var(--panel);border-top:1px solid var(--edge);
+  font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--dim);flex-shrink:0;
+  display:flex;justify-content:space-between;gap:10px;z-index:40;
+}
+.statusbar b{color:var(--brass);}
+#msg{color:var(--cream);}
+#msg.danger{color:var(--warn);font-weight:700;}
+.shake{animation:shakeAnim .5s;}
+@keyframes shakeAnim{0%,100%{transform:translate(0,0);}20%{transform:translate(-8px,4px);}40%{transform:translate(8px,-4px);}60%{transform:translate(-6px,-4px);}80%{transform:translate(6px,4px);}}
+
+.tooltip{position:fixed;z-index:200;background:#0f0d0a;border:1px solid var(--brass);border-radius:8px;
+  padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--cream);
+  pointer-events:none;display:none;line-height:1.6;box-shadow:0 8px 20px rgba(0,0,0,.5);white-space:nowrap;}
+.tooltip b{color:var(--brass);}
+
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:center;justify-content:center;}
+.modal{background:var(--panel);border:1px solid var(--edge);border-radius:12px;padding:16px;width:min(520px,90vw);max-height:80vh;display:flex;flex-direction:column;gap:10px;}
+.modal h3{margin:0;color:var(--brass);font-family:'JetBrains Mono',monospace;font-size:.85rem;}
+.modal textarea{width:100%;height:180px;background:#0e0c09;color:#bfe6a8;border:1px solid var(--edge);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:8px;resize:vertical;}
+.modal .row{display:flex;gap:8px;justify-content:flex-end;}
+.modal p{font-size:.8rem;color:var(--dim);margin:0;line-height:1.6;}
+.modal ul{font-size:.78rem;color:var(--dim);line-height:1.8;margin:0;padding-inline-start:18px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">مختبر الكهرباء <span>// LAB v2</span></div>
+  <div class="hgroup">
+    <div class="hbtn" id="btnUndo">↺ تراجع</div>
+    <div class="hbtn" id="btnRedo">↻ إعادة</div>
+    <div class="hbtn" id="btnReset">🗑 تصفير</div>
+    <div class="hbtn" id="btnExport">⇱ تصدير</div>
+    <div class="hbtn" id="btnImport">⇲ استيراد</div>
+    <div class="hbtn" id="btnMute">🔊 صوت</div>
+    <div class="hbtn" id="btnHelp">؟ مساعدة</div>
+  </div>
+  <div class="hgroup">
+    <div class="hbtn" id="zoomOut">−</div>
+    <div class="zlabel" id="zoomLabel">100%</div>
+    <div class="hbtn" id="zoomIn">+</div>
+    <div class="hbtn" id="zoomReset">⤢</div>
+  </div>
+</header>
+
+<div class="toolbox" id="toolbox"></div>
+
+<div class="workspace" id="workspace">
+  <div class="ws-inner" id="wsInner">
+    <svg id="wireLayer"></svg>
+  </div>
+</div>
+
+<div class="statusbar">
+  <div>اسحب أداة للأسفل • اسحب من الأطراف لتوصيل الأسلاك • دبل‑كليك على السلك للحذف • انقر عنصر ثم Delete لحذفه</div>
+  <div id="msg"><b>جاهز.</b></div>
+</div>
+
+<div id="ghost"></div>
+<div class="tooltip" id="tooltip"></div>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= SVG ICON LIBRARY (realistic-ish line art) ================= */
+function grad(id,c1,c2){ return `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>`; }
+
+function artBattery(c){
+  const id=c.id;
+  return `<svg viewBox="0 0 80 70">
+    <defs>${grad('bB'+id,'#4a4038','#241d16')}${grad('bCap'+id,'#e8d9a8','#a8935a')}</defs>
+    <rect x="10" y="14" width="52" height="42" rx="4" fill="url(#bB${id})" stroke="#171310" stroke-width="1.5"/>
+    <rect x="62" y="26" width="8" height="18" rx="2" fill="url(#bCap${id})" stroke="#171310"/>
+    <rect x="14" y="20" width="44" height="8" rx="2" fill="#5a4a30" opacity=".5"/>
+    <text x="36" y="42" font-size="11" text-anchor="middle" fill="#e8d9a8" font-family="JetBrains Mono, monospace" font-weight="700">${c.voltage.toFixed(0)}V</text>
+    <text x="20" y="12" font-size="14" fill="#ff5a3c" font-family="Georgia">+</text>
+    <text x="8" y="66" font-size="14" fill="#888">−</text>
+  </svg>`;
+}
+function artBulb(c){
+  const lit = Math.min(1,Math.abs(c._I||0)/1.8);
+  const glass = c.burned ? '#241f19' : `rgba(255,224,150,${0.12+lit*0.55})`;
+  const glow = c.burned? 'none' : `drop-shadow(0 0 ${4+lit*16}px rgba(255,190,90,${0.3+lit*0.6}))`;
+  return `<svg viewBox="0 0 70 80" style="filter:${glow}">
+    <defs>${grad('gl'+c.id,'#fff7e0','#caa544')}</defs>
+    <circle cx="35" cy="32" r="24" fill="${glass}" stroke="${c.burned?'#3a3025':'#c9b98a'}" stroke-width="2"/>
+    <path d="M24,26 L30,40 L35,28 L40,40 L46,26" fill="none" stroke="${c.burned?'#332a20':'#7a5a20'}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M28,54 L42,54 L40,62 Q35,66 30,62 Z" fill="url(#gl${c.id})" stroke="#8a7440" stroke-width="1"/>
+    <line x1="27" y1="58" x2="43" y2="58" stroke="#5a4a20" stroke-width="1.5"/>
+    <line x1="27" y1="62" x2="43" y2="62" stroke="#5a4a20" stroke-width="1.5"/>
+  </svg>`;
+}
+function artMotor(c){
+  const spin = c.spin||0;
+  return `<svg viewBox="0 0 80 70">
+    <defs>${grad('mo'+c.id,'#5a5248','#2a2620')}</defs>
+    <rect x="18" y="16" width="38" height="38" rx="6" fill="url(#mo${c.id})" stroke="#171310" stroke-width="1.5"/>
+    <circle cx="37" cy="35" r="15" fill="#1c1712" stroke="#000"/>
+    <g transform="rotate(${spin} 37 35)">
+      <ellipse cx="37" cy="26" rx="4" ry="9" fill="#cda233"/>
+      <ellipse cx="37" cy="44" rx="4" ry="9" fill="#cda233"/>
+      <ellipse cx="28" cy="35" rx="9" ry="4" fill="#a8842a"/>
+      <ellipse cx="46" cy="35" rx="9" ry="4" fill="#a8842a"/>
+      <circle cx="37" cy="35" r="4" fill="#eee2c9"/>
+    </g>
+    <rect x="56" y="30" width="14" height="4" fill="#333"/>
+  </svg>`;
+}
+function artSwitch(c){
+  const ang = c.closed ? -4 : 30;
+  return `<svg viewBox="0 0 90 60">
+    <rect x="8" y="30" width="74" height="10" rx="4" fill="#2a231a" stroke="#171310"/>
+    <circle cx="20" cy="35" r="5" fill="#cda233" stroke="#171310"/>
+    <circle cx="70" cy="35" r="5" fill="#cda233" stroke="#171310"/>
+    <g transform="rotate(${ang} 20 35)"><rect x="20" y="32" width="52" height="6" rx="3" fill="${c.closed?'#5fd86f':'#e8dfc9'}"/></g>
+    <circle cx="20" cy="35" r="3" fill="#171310"/>
+  </svg>`;
+}
+function artRheostat(c){
+  const pos = 12 + (c.value/100)*56;
+  return `<svg viewBox="0 0 90 55">
+    <rect x="10" y="20" width="70" height="16" rx="4" fill="#e6cf94" stroke="#8a6f1d" stroke-width="1.5"/>
+    ${Array.from({length:9}).map((_,i)=>`<rect x="${13+i*8}" y="20" width="3" height="16" fill="#c9a95a" opacity=".5"/>`).join('')}
+    <line x1="${pos}" y1="6" x2="${pos}" y2="26" stroke="#eee2c9" stroke-width="3"/>
+    <polygon points="${pos-6},6 ${pos+6},6 ${pos},14" fill="#cda233" stroke="#171310"/>
+  </svg>`;
+}
+function artMultimeter(c){
+  const dial = c.mode==='V'? -30 : (c.mode==='A'? 30:0);
+  return `<svg viewBox="0 0 90 100">
+    <rect x="8" y="8" width="74" height="84" rx="8" fill="#e8dfc9" stroke="#171310" stroke-width="2"/>
+    <rect x="16" y="16" width="58" height="24" rx="3" fill="#0e2a1e"/>
+    <circle cx="45" cy="64" r="14" fill="#c9b98a" stroke="#171310" stroke-width="1.5"/>
+    <line x1="45" y1="64" x2="45" y2="52" stroke="#171310" stroke-width="2" transform="rotate(${dial} 45 64)"/>
+    <circle cx="45" cy="64" r="2" fill="#171310"/>
+  </svg>`;
+}
+function bandColor(v){ return {brown:'#7a4a1e',black:'#1a1a1a',red:'#d32f2f',orange:'#f57c00',yellow:'#fbc02d',green:'#388e3c',blue:'#1976d2',violet:'#7b1fa2',grey:'#9e9e9e',gold:'#cda233'}[v]; }
+const RES_PRESETS = [
+  {v:10,bands:['brown','black','black']},{v:22,bands:['red','red','black']},
+  {v:47,bands:['yellow','violet','black']},{v:100,bands:['brown','black','brown']},
+  {v:220,bands:['red','red','brown']},{v:470,bands:['yellow','violet','brown']},
+  {v:1000,bands:['brown','black','red']},{v:2200,bands:['red','red','red']},{v:4700,bands:['yellow','violet','red']}
+];
+function artResistor(c){
+  const p = RES_PRESETS[c.presetIdx||0];
+  const bx=[30,38,46];
+  return `<svg viewBox="0 0 90 50">
+    <line x1="4" y1="25" x2="24" y2="25" stroke="#8a8a8a" stroke-width="3"/>
+    <line x1="66" y1="25" x2="86" y2="25" stroke="#8a8a8a" stroke-width="3"/>
+    <rect x="24" y="12" width="42" height="26" rx="6" fill="#e8d9a8" stroke="#a8935a" stroke-width="1.5"/>
+    ${p.bands.map((b,i)=>`<rect x="${bx[i]}" y="12" width="4" height="26" fill="${bandColor(b)}"/>`).join('')}
+  </svg>`;
+}
+const LED_COLORS = ['#ff3b3b','#3bff6a','#3b9bff','#fff23b','#f5f5f5'];
+function artLED(c){
+  const lit = c.burned? 0 : Math.min(1, Math.max(0,(c._I||0)) / 0.05);
+  const col = LED_COLORS[c.colorIdx||0];
+  return `<svg viewBox="0 0 60 90" style="filter:${lit>0.05?`drop-shadow(0 0 ${6+lit*14}px ${col})`:'none'}">
+    <line x1="18" y1="60" x2="18" y2="82" stroke="#999" stroke-width="2"/>
+    <line x1="42" y1="60" x2="42" y2="76" stroke="#999" stroke-width="2"/>
+    <path d="M14,60 L14,30 Q14,8 30,8 Q46,8 46,30 L46,60 Z" fill="${c.burned?'#2a2420':col}" fill-opacity="${c.burned?1:(0.25+lit*0.7)}" stroke="#8a8a8a" stroke-width="1.5"/>
+    <line x1="14" y1="60" x2="46" y2="60" stroke="#8a8a8a" stroke-width="1.5"/>
+    <text x="30" y="90" font-size="9" text-anchor="middle" fill="#a8977e" font-family="JetBrains Mono">+ ⟶ −</text>
+  </svg>`;
+}
+function artFuse(c){
+  const blown = c.blown;
+  return `<svg viewBox="0 0 90 46">
+    <line x1="4" y1="23" x2="18" y2="23" stroke="#8a8a8a" stroke-width="3"/>
+    <line x1="72" y1="23" x2="86" y2="23" stroke="#8a8a8a" stroke-width="3"/>
+    <rect x="18" y="8" width="54" height="30" rx="10" fill="rgba(220,235,255,.18)" stroke="#c9d8e6" stroke-width="1.5"/>
+    ${blown ? `<line x1="24" y1="23" x2="40" y2="16" stroke="#ffb454" stroke-width="2"/><line x1="50" y1="30" x2="66" y2="23" stroke="#ffb454" stroke-width="2"/>`
+            : `<line x1="24" y1="23" x2="66" y2="23" stroke="#c9a233" stroke-width="2"/>`}
+    <text x="45" y="43" font-size="9" text-anchor="middle" fill="#a8977e" font-family="JetBrains Mono">${c.rating}A</text>
+  </svg>`;
+}
+function artCapacitor(c){
+  const charge = c.charge||0;
+  return `<svg viewBox="0 0 80 60">
+    <line x1="4" y1="30" x2="30" y2="30" stroke="#8a8a8a" stroke-width="3"/>
+    <line x1="50" y1="30" x2="76" y2="30" stroke="#8a8a8a" stroke-width="3"/>
+    <rect x="26" y="6" width="8" height="48" fill="#c9a95a"/>
+    <rect x="46" y="6" width="8" height="48" fill="#555"/>
+    <rect x="0" y="52" width="${charge*80}" height="4" fill="#5fd86f"/>
+    <rect x="0" y="52" width="80" height="4" fill="none" stroke="#3d3226"/>
+  </svg>`;
+}
+function artBuzzer(c){
+  const active = Math.abs(c._I||0) > 0.03;
+  return `<svg viewBox="0 0 70 70">
+    <circle cx="35" cy="35" r="26" fill="#2f271b" stroke="#171310" stroke-width="2"/>
+    <circle cx="35" cy="35" r="18" fill="none" stroke="${active?'#ffb454':'#5a4a30'}" stroke-width="2"/>
+    <circle cx="35" cy="35" r="10" fill="none" stroke="${active?'#ffb454':'#5a4a30'}" stroke-width="2"/>
+    <circle cx="35" cy="35" r="3" fill="${active?'#ffb454':'#5a4a30'}"/>
+  </svg>`;
+}
+
+/* ================= TYPES ================= */
+const TYPES = {
+  battery:   {w:150,h:126,label:'بطارية',    art:artBattery},
+  bulb:      {w:100,h:120,label:'لمبة',      art:artBulb, R:12, maxI:1.8},
+  motor:     {w:110,h:118,label:'موتور',     art:artMotor, R:6, maxI:2.2},
+  switchT:   {w:120,h:96, label:'مفتاح',     art:artSwitch},
+  rheostat:  {w:150,h:112,label:'سرعات',     art:artRheostat},
+  multimeter:{w:150,h:168,label:'ملتيميتر',  art:artMultimeter},
+  resistor:  {w:130,h:96, label:'مقاومة',    art:artResistor},
+  led:       {w:90, h:130,label:'LED',       art:artLED, maxI:0.05},
+  fuse:      {w:120,h:96, label:'فيوز',      art:artFuse},
+  capacitor: {w:110,h:104,label:'مكثف',      art:artCapacitor},
+  buzzer:    {w:100,h:110,label:'جرس',       art:artBuzzer, R:20, maxI:1.0},
+};
+const TOOL_ORDER = ['battery','bulb','motor','switchT','rheostat','multimeter','resistor','led','fuse','capacitor','buzzer'];
+
+const RINT = 0.4, BATTERY_HARD_LIMIT = 8, MULTIMETER_MAX = 5;
+const LED_R_ON = 40, LED_R_OFF = 5e6;
+
+let comps=[], wires=[], idc=1;
+const newId=()=>'c'+(idc++);
+let zoom=1, panX=60, panY=30;
+let pendingWire=null, dragComp=null, panning=null, selectedId=null, muted=false;
+let undoStack=[], redoStack=[];
+
+const ws=document.getElementById('workspace'), wsInner=document.getElementById('wsInner'),
+      svg=document.getElementById('wireLayer'), msg=document.getElementById('msg'),
+      ghost=document.getElementById('ghost'), tooltip=document.getElementById('tooltip');
+
+function setMsg(t,danger){ msg.textContent=t; msg.className=danger?'danger':''; }
+
+/* ---------- audio ---------- */
+let actx=null;
+function audio(){ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); return actx; }
+function beep(freq=880,dur=0.09,type='sine',vol=0.14){
+  if(muted) return;
+  try{ const ac=audio(); const o=ac.createOscillator(); const g=ac.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.value=vol; o.connect(g); g.connect(ac.destination);
+    g.gain.setValueAtTime(vol,ac.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+dur);
+    o.start(); o.
