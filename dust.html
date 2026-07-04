@@ -685,4 +685,95 @@
         });
 
         sizeRange.addEventListener('input', () => {
-          settings.size = parseFloat(sizeRange.
+          settings.size = parseFloat(sizeRange.value);
+          sizeVal.textContent = settings.size.toFixed(1);
+        });
+
+        trailRange.addEventListener('input', () => {
+          settings.trail = parseFloat(trailRange.value);
+          trailVal.textContent = settings.trail.toFixed(2);
+        });
+
+        radiusRange.addEventListener('input', () => {
+          mouse.radius = parseFloat(radiusRange.value);
+          radiusVal.textContent = radiusRange.value;
+        });
+
+        glowToggle.addEventListener('change', () => {
+          settings.glow = glowToggle.checked;
+        });
+
+        perfToggle.addEventListener('change', () => {
+          settings.highPerf = perfToggle.checked;
+          // إعادة بناء الجسيمات لتطبيق الحد الأقصى الجديد فوراً
+          if (currentText) {
+            createParticlesFromText(currentText);
+          } else {
+            createRandomParticles(350);
+          }
+        });
+      }
+
+      // --- عدّاد الإطارات لمراقبة الأداء ---
+      let lastFrameTime = performance.now();
+      let frameCount = 0;
+      let fpsAccumulator = 0;
+      function updateFps(now) {
+        frameCount++;
+        const delta = now - lastFrameTime;
+        if (delta >= 500) {
+          const fps = Math.round((frameCount * 1000) / delta);
+          fpsCounter.textContent = fps + ' FPS';
+          fpsCounter.style.color = fps < 30 ? '#ff5555' : (fps < 50 ? '#ffaa44' : 'rgba(0, 255, 204, 0.7)');
+          frameCount = 0;
+          lastFrameTime = now;
+        }
+      }
+
+      function animate(now) {
+        ctx.fillStyle = `rgba(3, 5, 10, ${settings.trail})`;
+        ctx.fillRect(0, 0, width, height);
+
+        for (let p of particles) {
+          p.update(mouse);
+          p.draw(ctx);
+        }
+
+        updateFps(now || performance.now());
+        requestAnimationFrame(animate);
+      }
+
+      function bindEvents() {
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('touchmove', handleTouchMove, { passive: true });
+        window.addEventListener('mouseleave', resetMouse);
+        window.addEventListener('touchend', resetMouse);
+        window.addEventListener('touchcancel', resetMouse);
+        window.addEventListener('resize', () => {
+          resizeCanvas();
+          if (currentText) {
+            createParticlesFromText(currentText);
+          } else {
+            createRandomParticles(350);
+          }
+        });
+
+        formBtn.addEventListener('click', handleFormClick);
+        clearBtn.addEventListener('click', handleClearClick);
+        nameInput.addEventListener('keypress', handleKeyPress);
+
+        bindSettingsPanel();
+      }
+
+      window.addEventListener('load', () => {
+        resizeCanvas();
+        createRandomParticles(400);
+        bindEvents();
+        requestAnimationFrame(animate);
+
+        setTimeout(() => nameInput.focus(), 500);
+      });
+    })();
+  </script>
+</body>
+</html>
