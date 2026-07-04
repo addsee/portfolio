@@ -1,48 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohaned Suliman</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>معرض مشاريعي التفاعلية</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0d1117;
+      color: #ffffff;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px 0;
+    }
+    header h1 {
+      font-size: 1.8rem;
+      color: #00ffcc;
+      margin-bottom: 8px;
+    }
+    header p {
+      color: #8b949e;
+      font-size: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.2s, border-color 0.2s;
+      -webkit-tap-highlight-color: transparent; /* إيقاف وميض اللمس في الهواتف */
+    }
+    .card:active {
+      transform: scale(0.98);
+      border-color: #00ffcc;
+    }
+    .card-icon {
+      font-size: 2rem;
+    }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #f0f6fc;
+    }
+    .card-desc {
+      font-size: 0.9rem;
+      color: #8b949e;
+      line-height: 1.4;
+    }
+    .card-badge {
+      align-self: flex-start;
+      background: rgba(0, 255, 204, 0.1);
+      color: #00ffcc;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1 class="header-title">MOHANED SULIMAN</h1>
-        </header>
 
-        <section class="hero">
-            <div class="content">
-                <h2>Innovative Digital Solutions</h2>
-                <p style="margin: 1.5rem 0; line-height: 1.6;">
-                    Creating immersive digital experiences that blend cutting-edge technology 
-                    with artistic vision. Specializing in web development, 3D animation, 
-                    and interactive design.
-                </p>
-                <button class="neon-button">Explore Projects →</button>
-            </div>
+  <header>
+    <h1>✨ مختبر الإبداع التفاعلي</h1>
+    <p>تجارب برمجية ممتعة ومخصصة للهاتف</p>
+  </header>
 
-            <div class="profile-card">
-                <img src="profile.png" alt="Profile">
-            </div>
-        </section>
+  <main class="grid">
+    
+    <!-- كارد المشروع الأول -->
+    <a href="dust.html" class="card">
+      <div class="card-icon">✨</div>
+      <div class="card-title">تشكيل الغبار المضيء</div>
+      <div class="card-desc">اكتب اسمك وشاهده يتشكل من ذرات النجوم المضيئة مع مؤثرات حركية عند اللمس.</div>
+      <div class="card-badge">بصري</div>
+    </a>
 
-        <div class="projects">
-            <div class="project-card">
-                <h3>3D Web Experience</h3>
-                <p>Interactive 3D product configurator</p>
-            </div>
-            <div class="project-card">
-                <h3>AR Mobile App</h3>
-                <p>Augmented reality shopping assistant</p>
-            </div>
-            <div class="project-card">
-                <h3>AI Dashboard</h3>
-                <p>Machine learning analytics platform</p>
-            </div>
-        </div>
-    </div>
+    <!-- كارد المشروع الثاني -->
+    <a href="angry_button.html" class="card">
+      <div class="card-icon">🤬</div>
+      <div class="card-title">المبرمج الغاضب</div>
+      <div class="card-desc">تحدي الزر الهارب! حاول الضغط عليه واستمع لتعليقات المبرمجين الساخرة المستفزة.</div>
+      <div class="card-badge">لعبة مضحكة</div>
+    </a>
+
+  </main>
+
 </body>
-
 </html>
