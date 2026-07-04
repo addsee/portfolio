@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>تشكيل الاسم من الغبار المضيء</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #03050a;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* واجهة التحكم الرئيسية */
+    .control-panel {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      background: rgba(10, 18, 30, 0.7);
+      backdrop-filter: blur(15px);
+      padding: 16px 24px;
+      border-radius: 50px;
+      border: 1px solid rgba(0, 255, 204, 0.25);
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.1);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .name-input {
+      padding: 14px 22px;
+      background: rgba(3, 5, 10, 0.7);
+      border: 1px solid rgba(0, 255, 204, 0.4);
+      border-radius: 30px;
+      color: #ffffff;
+      font-size: 1.1rem;
+      text-align: center;
+      outline: none;
+      width: 220px;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .name-input:focus {
+      border-color: #00ffcc;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.35);
+      background: rgba(8, 15, 28, 0.85);
+    }
+
+    .name-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 300;
+    }
+
+    .form-btn {
+      padding: 14px 30px;
+      background: rgba(0, 255, 204, 0.08);
+      border: 1px solid #00ffcc;
+      border-radius: 30px;
+      color: #00ffcc;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      letter-spacing: 1.5px;
+      backdrop-filter: blur(5px);
+      white-space: nowrap;
+    }
+
+    .form-btn:hover {
+      background: #00ffcc;
+      color: #03050a;
+      box-shadow: 0 0 30px #00ffcc, 0 0 15px #00ffcc;
+      transform: scale(1.03);
+    }
+
+    .form-btn:active {
+      transform: scale(0.97);
+    }
+
+    .clear-btn {
+      border-color: rgba(255, 150, 50, 0.7);
+      color: #ffaa44;
+      background: rgba(255, 150, 50, 0.05);
+    }
+
+    .clear-btn:hover {
+      background: #ff8833;
+      color: #03050a;
+      box-shadow: 0 0 25px #ff8833;
+      border-color: #ff8833;
+    }
+
+    .settings-btn {
+      border-color: rgba(176, 136, 255, 0.7);
+      color: #b088ff;
+      background: rgba(176, 136, 255, 0.05);
+      padding: 14px 20px;
+    }
+
+    .settings-btn:hover {
+      background: #b088ff;
+      color: #03050a;
+      box-shadow: 0 0 25px #b088ff;
+      border-color: #b088ff;
+    }
+
+    .hint-text {
+      position: absolute;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      text-align: center;
+      pointer-events: none;
+      transition: opacity 0.8s;
+    }
+
+    /* لوحة الإعدادات المنبثقة */
+    .settings-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-overlay.open {
+      display: flex;
+    }
+
+    .settings-panel {
+      background: rgba(8, 14, 26, 0.92);
+      border: 1px solid rgba(0, 255, 204, 0.3);
+      box-shadow: 0 0 50px rgba(0, 255, 204, 0.15);
+      border-radius: 22px;
+      padding: 26px 30px 20px;
+      width: min(90vw, 380px);
+      backdrop-filter: blur(20px);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .settings-title {
+      color: #00ffcc;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .setting-row {
+      margin-bottom: 18px;
+    }
+
+    .setting-label {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+    }
+
+    .setting-label span.val {
+      color: #00ffcc;
+      font-weight: 600;
+      min-width: 34px;
+      text-align: left;
+      direction: ltr;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.15);
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #00ffcc;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,255,204,0.7);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #00ffcc;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px rgba(0,255,204,0.7);
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.92rem;
+    }
+
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider-toggle {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.15);
+      border-radius: 26px;
+      transition: 0.3s;
+    }
+    .slider-toggle:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+    .switch input:checked + .slider-toggle {
+      background: #00ffcc;
+    }
+    .switch input:checked + .slider-toggle:before {
+      transform: translateX(-20px);
+    }
+
+    .fps-counter {
+      position: absolute;
+      top: 25px;
+      right: 20px;
+      z-index: 20;
+      color: rgba(0, 255, 204, 0.7);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      font-family: monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 4px 10px;
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    .close-settings {
+      display: block;
+      margin: 6px auto 0;
+      padding: 10px 26px;
+      background: rgba(0, 255, 204, 0.1);
+      border: 1px solid #00ffcc;
+      border-radius: 30px;
+      color: #00ffcc;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .close-settings:hover {
+      background: #00ffcc;
+      color: #03050a;
+    }
+
+    @media (max-width: 600px) {
+      .control-panel {
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px 20px;
+        bottom: 30px;
+      }
+      .name-input {
+        width: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particleCanvas"></canvas>
+
+  <div class="hint-text" id="hint">أدخل اسماً واضغط تشكيل</div>
+  <div class="fps-counter" id="fpsCounter">60 FPS</div>
+
+  <div class="control-panel">
+    <input 
+      type="text" 
+      class="name-input" 
+      id="nameInput" 
+      placeholder="اكتب الاسم هنا..." 
+      maxlength="12"
+      autocomplete="off"
+    >
+    <button class="form-btn" id="formBtn">✨ تشكيل</button>
+    <button class="form-btn clear-btn" id="clearBtn">✕ مسح</button>
+    <button class="form-btn settings-btn" id="settingsBtn">⚙</button>
+  </div>
+
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-panel">
+      <div class="settings-title">⚙ إعدادات الأداء والمظهر</div>
+
+      <div class="setting-row">
+        <div class="setting-label"><span>السرعة</span><span class="val" id="speedVal">1.0</span></div>
+        <input type="range" id="speedRange" min="0.2" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label"><span>عدد الجسيمات (الكثافة)</span><span class="val" id="densityVal">2.8</span></div>
+        <input type="range" id="densityRange" min="0.8" max="5" step="0.2" value="2.8">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label"><span>حجم الجسيمات</span><span class="val" id="sizeVal">1.0</span></div>
+        <input type="range" id="sizeRange" min="0.4" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label"><span>طول الأثر (التلاشي)</span><span class="val" id="trailVal">0.24</span></div>
+        <input type="range" id="trailRange" min="0.05" max="0.6" step="0.01" value="0.24">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label"><span>نطاق تفاعل المؤشر</span><span class="val" id="radiusVal">85</span></div>
+        <input type="range" id="radiusRange" min="0" max="200" step="5" value="85">
+      </div>
+
+      <div class="toggle-row">
+        <span>تفعيل التوهج (Glow)</span>
+        <label class="switch">
+          <input type="checkbox" id="glowToggle" checked>
+          <span class="slider-toggle"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <span>وضع الأداء العالي (لتقليل اللاق)</span>
+        <label class="switch">
+          <input type="checkbox" id="perfToggle">
+          <span class="slider-toggle"></span>
+        </label>
+      </div>
+
+      <button class="close-settings" id="closeSettings">إغلاق</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      const nameInput = document.getElementById('nameInput');
+      const formBtn = document.getElementById('formBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const hint = document.getElementById('hint');
+      const fpsCounter = document.getElementById('fpsCounter');
+
+      // عناصر الإعدادات
+      const settingsBtn = document.getElementById('settingsBtn');
+      const settingsOverlay = document.getElementById('settingsOverlay');
+      const closeSettings = document.getElementById('closeSettings');
+      const speedRange = document.getElementById('speedRange');
+      const densityRange = document.getElementById('densityRange');
+      const sizeRange = document.getElementById('sizeRange');
+      const trailRange = document.getElementById('trailRange');
+      const radiusRange = document.getElementById('radiusRange');
+      const glowToggle = document.getElementById('glowToggle');
+      const perfToggle = document.getElementById('perfToggle');
+
+      const speedVal = document.getElementById('speedVal');
+      const densityVal = document.getElementById('densityVal');
+      const sizeVal = document.getElementById('sizeVal');
+      const trailVal = document.getElementById('trailVal');
+      const radiusVal = document.getElementById('radiusVal');
+
+      let width, height;
+      let particles = [];
+      let currentText = '';
+
+      // قماش مخفي لرسم النص واستخراج نقاط البكسل
+      const offCanvas = document.createElement('canvas');
+      const offCtx = offCanvas.getContext('2d');
+
+      const mouse = {
+        x: null,
+        y: null,
+        radius: 85
+      };
+
+      // إعدادات قابلة للتحكم من المستخدم
+      const settings = {
+        speed: 1.0,       // مضاعف سرعة الحركة (ease/friction)
+        density: 2.8,     // كثافة استخراج نقاط النص
+        size: 1.0,        // مضاعف حجم الجسيمات
+        trail: 0.24,      // شفافية مسح الخلفية (كلما قلّت زاد طول الأثر)
+        glow: true,        // تفعيل التوهج (shadowBlur)
+        highPerf: false    // وضع الأداء العالي (يقلل الجسيمات والتوهج تلقائياً)
+      };
+
+      // تكوين النص
+      const textConfig = {
+        font: 'bold 120px "Segoe UI", "Arial", sans-serif',
+        density: 2.8,
+        letterSpacing: 8,
+      };
+
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      // استخراج نقاط البكسل من النص
+      function getTextPixels(text) {
+        if (!text || text.trim() === '') return [];
+
+        offCanvas.width = width;
+        offCanvas.height = height;
+        offCtx.clearRect(0, 0, width, height);
+
+        offCtx.font = textConfig.font;
+        offCtx.fillStyle = 'white';
+        offCtx.textAlign = 'center';
+        offCtx.textBaseline = 'middle';
+
+        let fontSize = 120;
+        let textWidth = offCtx.measureText(text).width;
+
+        if (textWidth > width * 0.85) {
+          const ratio = (width * 0.85) / textWidth;
+          fontSize = Math.floor(120 * ratio);
+          offCtx.font = `bold ${fontSize}px "Segoe UI", "Arial", sans-serif`;
+          textWidth = offCtx.measureText(text).width;
+        }
+
+        offCtx.fillText(text, width / 2, height / 2);
+
+        const imageData = offCtx.getImageData(0, 0, width, height);
+        const pixels = imageData.data;
+        const points = [];
+
+        // كلما زادت قيمة density (المضبوطة من المستخدم) زادت الجسيمات وقلت خطوة المسح
+        const step = Math.max(1, Math.floor(4 / textConfig.density));
+
+        for (let y = 0; y < height; y += step) {
+          for (let x = 0; x < width; x += step) {
+            const index = (y * width + x) * 4;
+            if (pixels[index] > 128) {
+              points.push({ x, y });
+            }
+          }
+        }
+
+        // حد أقصى للجسيمات لمنع اللاق الشديد في وضع الأداء العالي
+        const maxPoints = settings.highPerf ? 900 : 4000;
+        if (points.length > maxPoints) {
+          const stride = Math.ceil(points.length / maxPoints);
+          return points.filter((_, i) => i % stride === 0);
+        }
+
+        return points;
+      }
+
+      function createParticlesFromText(text) {
+        const points = getTextPixels(text);
+
+        if (points.length === 0) {
+          return createRandomParticles(settings.highPerf ? 150 : 400);
+        }
+
+        particles = [];
+
+        points.forEach((point) => {
+          const edge = Math.floor(Math.random() * 4);
+          let startX, startY;
+
+          switch(edge) {
+            case 0:
+              startX = Math.random() * width;
+              startY = -50 - Math.random() * 300;
+              break;
+            case 1:
+              startX = Math.random() * width;
+              startY = height + 50 + Math.random() * 300;
+              break;
+            case 2:
+              startX = -50 - Math.random() * 300;
+              startY = Math.random() * height;
+              break;
+            case 3:
+              startX = width + 50 + Math.random() * 300;
+              startY = Math.random() * height;
+              break;
+          }
+
+          particles.push(new Particle(startX, startY, point.x, point.y));
+        });
+
+        currentText = text;
+        if (hint) hint.style.opacity = '0';
+      }
+
+      function createRandomParticles(count) {
+        particles = [];
+        const n = settings.highPerf ? Math.min(count, 150) : count;
+        for (let i = 0; i < n; i++) {
+          const x = Math.random() * width;
+          const y = Math.random() * height;
+          const startX = width / 2 + (Math.random() - 0.5) * width * 1.5;
+          const startY = height / 2 + (Math.random() - 0.5) * height * 1.5;
+          particles.push(new Particle(startX, startY, x, y));
+        }
+      }
+
+      class Particle {
+        constructor(x, y, targetX, targetY) {
+          this.x = x;
+          this.y = y;
+          this.targetX = targetX;
+          this.targetY = targetY;
+          this.baseSize = Math.random() * 1.6 + 0.5;
+
+          const r = Math.random();
+          if (r < 0.4) {
+            this.color = '#00ffcc';
+          } else if (r < 0.7) {
+            this.color = '#4da6ff';
+          } else if (r < 0.9) {
+            this.color = '#b088ff';
+          } else {
+            this.color = '#ffaa44';
+          }
+
+          this.baseEase = 0.008 + Math.random() * 0.022;
+          this.baseFriction = 0.88;
+          this.vx = 0;
+          this.vy = 0;
+        }
+
+        draw(ctx) {
+          ctx.fillStyle = this.color;
+          if (settings.glow && !settings.highPerf) {
+            ctx.shadowColor = this.color;
+            ctx.shadowBlur = 4 + Math.random() * 3;
+          }
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.baseSize * settings.size, 0, Math.PI * 2);
+          ctx.fill();
+          if (settings.glow && !settings.highPerf) {
+            ctx.shadowBlur = 0;
+            ctx.shadowColor = 'transparent';
+          }
+        }
+
+        update(mouse) {
+          const speed = settings.speed;
+
+          if (mouse.x !== null && mouse.y !== null && mouse.radius > 0) {
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < mouse.radius) {
+              const force = (mouse.radius - dist) / mouse.radius;
+              const angle = Math.atan2(dy, dx);
+              this.vx -= Math.cos(angle) * force * 2.5 * speed;
+              this.vy -= Math.sin(angle) * force * 2.5 * speed;
+            }
+          }
+
+          const dxTarget = this.targetX - this.x;
+          const dyTarget = this.targetY - this.y;
+          this.vx += dxTarget * this.baseEase * speed;
+          this.vy += dyTarget * this.baseEase * speed;
+          this.vx *= this.baseFriction;
+          this.vy *= this.baseFriction;
+          this.x += this.vx;
+          this.y += this.vy;
+
+          this.x = Math.max(-30, Math.min(width + 30, this.x));
+          this.y = Math.max(-30, Math.min(height + 30, this.y));
+        }
+      }
+
+      function handleMouseMove(e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      }
+      function handleTouchMove(e) {
+        if (e.touches.length > 0) {
+          mouse.x = e.touches[0].clientX;
+          mouse.y = e.touches[0].clientY;
+        }
+      }
+      function resetMouse() {
+        mouse.x = null;
+        mouse.y = null;
+      }
+
+      function handleFormClick() {
+        const text = nameInput.value.trim();
+        if (text.length > 0) {
+          createParticlesFromText(text);
+        } else {
+          createRandomParticles(500);
+          if (hint) hint.style.opacity = '1';
+          hint.textContent = 'اكتب اسماً أولاً...';
+          setTimeout(() => { hint.textContent = 'أدخل اسماً واضغط تشكيل'; }, 2000);
+        }
+      }
+
+      function handleClearClick() {
+        nameInput.value = '';
+        createRandomParticles(350);
+        currentText = '';
+        if (hint) {
+          hint.style.opacity = '1';
+          hint.textContent = 'أدخل اسماً واضغط تشكيل';
+        }
+      }
+
+      function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+          handleFormClick();
+        }
+      }
+
+      // --- ربط عناصر الإعدادات ---
+      function bindSettingsPanel() {
+        settingsBtn.addEventListener('click', () => {
+          settingsOverlay.classList.add('open');
+        });
+        closeSettings.addEventListener('click', () => {
+          settingsOverlay.classList.remove('open');
+        });
+        settingsOverlay.addEventListener('click', (e) => {
+          if (e.target === settingsOverlay) settingsOverlay.classList.remove('open');
+        });
+
+        speedRange.addEventListener('input', () => {
+          settings.speed = parseFloat(speedRange.value);
+          speedVal.textContent = settings.speed.toFixed(1);
+        });
+
+        densityRange.addEventListener('input', () => {
+          settings.density = parseFloat(densityRange.value);
+          textConfig.density = settings.density;
+          densityVal.textContent = settings.density.toFixed(1);
+          // إعادة تشكيل النص الحالي فوراً لمعاينة الكثافة الجديدة
+          if (currentText) createParticlesFromText(currentText);
+        });
+
+        sizeRange.addEventListener('input', () => {
+          settings.size = parseFloat(sizeRange.
