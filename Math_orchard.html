@@ -1,397 +1,563 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>🍎 بستان الأرقام</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --sky-top:#5EC3FF; --sky-bottom:#E7F8FF;
-    --grass:#8FD48A; --grass-deep:#4F9A5B;
-    --sun:#FFD166; --sun-deep:#F4A227;
-    --apple:#FF5D5D; --apple-deep:#C62828;
-    --wood:#B07A44; --wood-deep:#7A4E28;
-    --cream:#FFF6E0; --mint:#3FBDB0; --mint-deep:#1F8F84;
-    --ink:#5B4530;
-  }
-  *{box-sizing:border-box;user-select:none;-webkit-user-select:none;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-  html,body{height:100%;}
-  body{
-    font-family:'Baloo Bhaijaan 2',sans-serif;
-    background:linear-gradient(180deg,var(--sky-top) 0%, var(--sky-bottom) 38%, #CDEFC3 62%, var(--grass) 100%);
-    height:100vh;height:100dvh;width:100vw;overflow:hidden;
-    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-    padding:12px 12px max(18px, env(safe-area-inset-bottom,18px));
-    position:fixed;top:0;left:0;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
+  <title>مزرعة الأرقام الذكية | 0-20</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  /* ---------- ambient background ---------- */
-  .sun{position:fixed;top:16px;left:20px;width:54px;height:54px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #FFE9A8, var(--sun) 60%, var(--sun-deep) 100%);
-    box-shadow:0 0 30px rgba(255,209,102,.7);pointer-events:none;z-index:0;animation:sunPulse 4s infinite;}
-  @keyframes sunPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-  .cloud{position:fixed;background:#fff;border-radius:50px;opacity:.8;pointer-events:none;z-index:0;}
-  .cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%;}
-  .cloud1{width:70px;height:26px;top:9%;right:12%;animation:cloudFloat 9s infinite ease-in-out;}
-  .cloud1::before{width:30px;height:30px;top:-15px;left:12px;}
-  .cloud1::after{width:38px;height:34px;top:-19px;left:30px;}
-  .cloud2{width:56px;height:20px;top:18%;right:32%;animation:cloudFloat 12s infinite ease-in-out reverse;}
-  .cloud2::before{width:24px;height:24px;top:-12px;left:10px;}
-  .cloud2::after{width:30px;height:26px;top:-14px;left:24px;}
-  @keyframes cloudFloat{0%,100%{transform:translateX(0)}50%{transform:translateX(-25px)}}
-  .bird{position:fixed;pointer-events:none;z-index:1;animation:birdFly 6s infinite ease-in-out;font-size:18px;}
-  @keyframes birdFly{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-30px,-16px) rotate(-5deg)}50%{transform:translate(-60px,0) rotate(0)}75%{transform:translate(-30px,-10px) rotate(5deg)}100%{transform:translate(0,0) rotate(0)}}
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(180deg, #87CEEB 0%, #B0E0FF 25%, #A5D6A7 70%, #66BB6A 100%);
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px max(12px, env(safe-area-inset-bottom, 12px));
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
 
-  /* ---------- header: icons + digits only, no words ---------- */
-  header{width:100%;display:flex;justify-content:space-between;align-items:center;
-    padding:10px 16px;background:rgba(255,255,255,.45);border-radius:24px;
-    backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.7);z-index:10;
-    box-shadow:0 4px 15px rgba(0,0,0,.08);}
-  .badge{display:flex;align-items:center;gap:6px;font-weight:800;font-size:1.15rem;color:var(--ink);
-    background:rgba(255,255,255,.6);padding:6px 14px;border-radius:18px;}
-  .badge.level{background:linear-gradient(135deg,#FF9F6B,#FF6B6B);color:#fff;
-    box-shadow:0 4px 12px rgba(255,107,107,.35);animation:badgePulse 2.4s infinite;}
-  @keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-  .badge .icon{font-size:1.3rem;}
+    /* ---------- خلفية متحركة ---------- */
+    .sky-element { position: fixed; pointer-events: none; z-index: 1; }
+    .sun {
+      top: 12px; right: 25px; width: 55px; height: 55px;
+      background: radial-gradient(circle, #FFF176 30%, #FFB300 100%);
+      border-radius: 50%; box-shadow: 0 0 35px #FFD54F, 0 0 80px #FFCA28;
+      animation: sunGlow 3s infinite alternate;
+    }
+    @keyframes sunGlow {
+      from { box-shadow: 0 0 30px #FFD54F, 0 0 60px #FFB300; transform: scale(1); }
+      to { box-shadow: 0 0 50px #FFEE58, 0 0 90px #FFB300; transform: scale(1.08); }
+    }
 
-  /* ---------- problem row ---------- */
-  .math-row{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:6px 0;z-index:5;}
-  .plate{flex:1;max-width:38%;min-height:96px;background:rgba(255,255,255,.55);
-    border-radius:22px;padding:10px 6px;display:flex;align-items:center;justify-content:center;
-    box-shadow:0 6px 0 rgba(0,0,0,.07),0 8px 18px rgba(0,0,0,.1);border:2px solid rgba(255,255,255,.85);
-    backdrop-filter:blur(4px);}
-  .apple-grid{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:3px;width:100%;}
-  .operator{font-size:2rem;font-weight:800;color:#fff;width:46px;height:46px;flex:0 0 auto;
-    display:flex;align-items:center;justify-content:center;border-radius:50%;
-    background:linear-gradient(135deg,var(--mint),var(--mint-deep));
-    box-shadow:0 4px 10px rgba(0,0,0,.2);animation:opBounce 1.1s infinite alternate;}
-  @keyframes opBounce{to{transform:translateY(-6px)}}
+    .cloud {
+      background: rgba(255,255,255,0.85); border-radius: 50%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .cloud1 { width: 90px; height: 35px; top: 8%; left: 12%; animation: floatCloud 9s infinite ease-in-out; }
+    .cloud2 { width: 70px; height: 28px; top: 14%; right: 18%; animation: floatCloud 11s infinite ease-in-out reverse; }
+    .cloud::before, .cloud::after {
+      content: ''; position: absolute; background: inherit; border-radius: 50%;
+    }
+    .cloud1::before { width: 45px; height: 45px; top: -22px; left: 18px; }
+    .cloud1::after { width: 55px; height: 50px; top: -28px; left: 40px; }
+    .cloud2::before { width: 35px; height: 35px; top: -18px; left: 15px; }
+    .cloud2::after { width: 40px; height: 38px; top: -22px; left: 30px; }
 
-  /* mini apples used inside plates (display only) */
-  .mini-apple{border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 35% 35%,#FF8A80,var(--apple) 70%,var(--apple-deep) 100%);
-    box-shadow:inset -2px -2px 4px rgba(0,0,0,.25);flex:0 0 auto;position:relative;}
-  .mini-apple.remove{opacity:.4;filter:grayscale(45%);}
-  .mini-apple.remove::after{content:'✖';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font-size:60%;color:#7A2020;}
+    @keyframes floatCloud {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(25px); }
+    }
 
-  /* ---------- playground ---------- */
-  .playground{display:flex;width:100%;justify-content:space-between;align-items:flex-end;flex:1;position:relative;z-index:5;margin:2px 0;}
-  .tree-zone{width:44%;height:100%;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;}
-  .tree-trunk{width:30px;height:78px;background:linear-gradient(90deg,#795548,#8D6E63,#795548);
-    border-radius:14px 14px 4px 4px;box-shadow:inset -3px 0 5px rgba(0,0,0,.2);z-index:1;}
-  .tree-leaves{width:130px;height:130px;margin-bottom:-40px;border-radius:46% 46% 40% 40%;
-    background:radial-gradient(ellipse,#43A047 40%,#2E7D32 72%,#1B5E20 100%);
-    box-shadow:0 12px 18px rgba(0,0,0,.15),inset -14px -14px 18px rgba(0,0,0,.15);
-    z-index:3;animation:treeSway 4.2s infinite ease-in-out;cursor:pointer;position:relative;}
-  @keyframes treeSway{0%,100%{transform:rotate(0)}30%{transform:rotate(2deg)}70%{transform:rotate(-1.5deg)}}
-  .tree-leaves.shake{animation:treeShake .4s;}
-  @keyframes treeShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-  .basket{width:88%;min-height:58px;background:rgba(255,255,255,.4);border-radius:18px;
-    border:2px dashed rgba(122,78,40,.5);display:flex;flex-wrap:wrap;align-content:flex-end;justify-content:center;
-    gap:4px;padding:6px;position:relative;z-index:2;margin-top:4px;}
-  .basket-icon{position:absolute;bottom:-6px;right:-2px;font-size:1.6rem;opacity:.85;pointer-events:none;}
+    .bird {
+      font-size: 22px; animation: birdMove 7s infinite ease-in-out;
+    }
+    @keyframes birdMove {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      30% { transform: translate(35px, -18px) rotate(4deg); }
+      60% { transform: translate(70px, -5px) rotate(-3deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
 
-  .answer-zone{width:50%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;position:relative;}
-  .answer-plate{width:94%;min-height:104px;background:rgba(255,255,255,.4);border-radius:26px;
-    border:3px dashed #57B85A;display:flex;flex-wrap:wrap;align-content:flex-end;justify-content:center;
-    gap:4px;padding:10px;margin-bottom:4px;position:relative;transition:box-shadow .3s;}
-  .answer-plate.highlight{animation:glowPulse 1.4s infinite;}
-  @keyframes glowPulse{0%,100%{box-shadow:0 0 12px rgba(87,184,90,.25)}50%{box-shadow:0 0 26px rgba(87,184,90,.55)}}
-  .answer-plate.shake{animation:plateShake .45s;}
-  @keyframes plateShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-  .ghost-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    pointer-events:none;font-size:2.4rem;opacity:0;animation:ghostFade 2.4s infinite;}
-  @keyframes ghostFade{0%,100%{opacity:0;transform:scale(.7)}50%{opacity:.28;transform:scale(1)}}
-  .guide-hand{position:absolute;bottom:26%;font-size:1.8rem;z-index:6;pointer-events:none;opacity:0;
-    animation:guideMove 2.6s infinite ease-in-out;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
-  @keyframes guideMove{
-    0%{opacity:0; left:36%; transform:scale(.9) rotate(-8deg);}
-    12%{opacity:1;}
-    45%{opacity:1; left:60%; transform:scale(1.05) rotate(4deg);}
-    60%{opacity:0; left:62%;}
-    100%{opacity:0; left:36%;}
-  }
+    /* ---------- لوحة النتيجة ---------- */
+    .top-bar {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(12px); border-radius: 40px;
+      border: 2px solid rgba(255,255,255,0.8); z-index: 10;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .level-pill {
+      background: #FF7043; color: white; padding: 8px 20px;
+      border-radius: 30px; font-weight: bold; font-size: 1rem;
+      box-shadow: 0 4px 8px rgba(255,112,67,0.3);
+      animation: popBadge 2s infinite;
+    }
+    @keyframes popBadge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .score-badge {
+      display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.8);
+      padding: 8px 18px; border-radius: 30px; font-weight: bold; color: #D84315;
+    }
 
-  /* ---------- draggable apple (tree + answer) ---------- */
-  .apple{width:32px;height:32px;border-radius:50% 50% 45% 45%;position:relative;cursor:grab;touch-action:none;
-    background:radial-gradient(circle at 35% 35%,#FF8A80,var(--apple) 70%,var(--apple-deep) 100%);
-    box-shadow:inset -3px -3px 5px rgba(0,0,0,.25),2px 3px 6px rgba(0,0,0,.2);
-    animation:appleAppear .35s ease;z-index:10;flex:0 0 auto;}
-  @keyframes appleAppear{0%{transform:scale(0) rotate(-30deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);opacity:1;}100%{transform:scale(1) rotate(0);}}
-  .apple::before{content:'';position:absolute;top:-5px;left:50%;width:3px;height:8px;background:#5D4037;transform:translateX(-50%);border-radius:2px;}
-  .apple::after{content:'🍃';position:absolute;top:-8px;left:50%;font-size:10px;transform:translateX(5px);}
-  .apple.dragging{transform:scale(1.35) rotate(8deg);cursor:grabbing;box-shadow:0 10px 22px rgba(0,0,0,.35);opacity:.95;}
-  .apple.poof{animation:poof .3s forwards;}
-  @keyframes poof{to{transform:scale(0) rotate(40deg);opacity:0;}}
+    /* ---------- المعادلة العلوية ---------- */
+    .equation-panel {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; margin: 8px 0; z-index: 10;
+    }
+    .plate-card {
+      display: flex; flex-direction: column; align-items: center;
+      background: rgba(255,255,255,0.65); backdrop-filter: blur(6px);
+      border-radius: 24px; padding: 10px 6px; width: 35%; min-height: 100px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.06), 0 10px 20px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.9);
+    }
+    .fruits-row {
+      display: flex; flex-wrap: wrap-reverse; justify-content: center;
+      align-content: flex-end; gap: 3px; width: 100%; min-height: 48px; padding: 4px;
+    }
+    .plate-dish {
+      width: 90%; height: 24px; background: linear-gradient(180deg, #FFF9C4, #FFD54F);
+      border-radius: 45% / 22px; border: 3px solid #FFB74D;
+      box-shadow: inset 0 -3px 0 #E0A800; margin-top: 4px;
+    }
+    .operator-sign {
+      font-size: 2.6rem; font-weight: bold; color: white;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.3); background: rgba(255,255,255,0.25);
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      animation: bounceSign 1.2s infinite alternate;
+    }
+    @keyframes bounceSign {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
+    }
 
-  /* ---------- mascot ---------- */
-  .mascot{position:fixed;bottom:96px;left:14px;font-size:2.4rem;z-index:20;pointer-events:none;
-    transition:transform .25s;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2));}
-  .mascot.bounce{animation:mascotBounce .5s;}
-  @keyframes mascotBounce{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-14px) scale(1.15);}}
-  .mascot.wobble{animation:mascotWobble .5s;}
-  @keyframes mascotWobble{0%,100%{transform:rotate(0);}25%{transform:rotate(-12deg);}75%{transform:rotate(12deg);}}
+    /* ---------- منطقة السحب ---------- */
+    .play-area {
+      display: flex; width: 100%; justify-content: space-between;
+      align-items: flex-end; flex: 1; position: relative; z-index: 10; margin: 4px 0;
+    }
+    .tree-section {
+      width: 42%; height: 100%; position: relative;
+      display: flex; justify-content: center; align-items: flex-end;
+    }
+    .trunk {
+      width: 32px; height: 95px; background: linear-gradient(90deg, #6D4C41, #8D6E63, #6D4C41);
+      border-radius: 15px 15px 4px 4px; position: absolute; bottom: 15px;
+      z-index: 2; box-shadow: inset -3px 0 6px rgba(0,0,0,0.25);
+    }
+    .leaves {
+      width: 140px; height: 140px; background: radial-gradient(circle at 40% 35%, #66BB6A, #2E7D32 80%);
+      border-radius: 42% 42% 38% 38%; position: absolute; bottom: 75px;
+      left: 50%; transform: translateX(-50%); box-shadow: 0 18px 25px rgba(0,0,0,0.2);
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+      padding: 18px; z-index: 3; animation: swayTree 4.5s infinite ease-in-out;
+    }
+    @keyframes swayTree {
+      0%, 100% { transform: translateX(-50%) rotate(0deg); }
+      30% { transform: translateX(-50%) rotate(2.5deg); }
+      70% { transform: translateX(-50%) rotate(-2deg); }
+    }
 
-  /* ---------- check button: icon only, animation invites the tap ---------- */
-  .check-btn{position:relative;width:78px;height:78px;border-radius:50%;border:none;z-index:10;
-    background:linear-gradient(135deg,var(--mint),var(--mint-deep));
-    box-shadow:0 7px 0 var(--mint-deep,#1B8A7A),0 10px 22px rgba(38,166,154,.35);
-    display:flex;align-items:center;justify-content:center;cursor:pointer;}
-  .check-btn svg{width:34px;height:34px;}
-  .check-btn::before,.check-btn::after{content:'';position:absolute;inset:-6px;border-radius:50%;
-    border:3px solid var(--mint);opacity:0;animation:ripple 2.2s infinite;}
-  .check-btn::after{animation-delay:1.1s;}
-  @keyframes ripple{0%{opacity:.6;transform:scale(1);}100%{opacity:0;transform:scale(1.7);}}
-  .check-btn.pressed{transform:translateY(5px);box-shadow:0 2px 0 var(--mint-deep,#1B8A7A),0 4px 10px rgba(38,166,154,.35);}
+    .answer-zone {
+      width: 52%; height: 100%; display: flex;
+      flex-direction: column; align-items: center; justify-content: flex-end;
+    }
+    .drop-plate {
+      width: 92%; min-height: 105px; background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px); border-radius: 28px;
+      border: 3px dashed #43A047; position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: flex-end; padding: 8px 8px 14px;
+      margin-bottom: 5px; box-shadow: inset 0 0 20px rgba(56,142,60,0.15);
+      transition: all 0.25s ease;
+    }
+    .drop-plate.active-drop {
+      border-color: #FF9800; background: rgba(255,224,130,0.45);
+      box-shadow: 0 0 0 4px rgba(255,152,0,0.25), inset 0 0 25px rgba(255,152,0,0.2);
+      animation: pulseBorder 1.2s infinite;
+    }
+    @keyframes pulseBorder {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(255,152,0,0.25); }
+      50% { box-shadow: 0 0 0 10px rgba(255,152,0,0.1); }
+    }
 
-  /* ---------- sparkles ---------- */
-  .sparkle{position:fixed;pointer-events:none;z-index:150;animation:sparkleAnim .8s ease-out forwards;}
-  @keyframes sparkleAnim{0%{transform:translate(0,0) scale(0) rotate(0);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(1.5) rotate(180deg);opacity:0;}}
+    /* ---------- الفاكهة ---------- */
+    .fruit {
+      width: 27px; height: 27px;
+      background: radial-gradient(circle at 35% 35%, #FF8A80, #F44336 70%, #B71C1C 100%);
+      border-radius: 50% 50% 44% 44%;
+      cursor: grab; touch-action: none; position: relative;
+      box-shadow: inset -3px -3px 6px rgba(0,0,0,0.3), 2px 4px 8px rgba(0,0,0,0.25);
+      transition: transform 0.15s ease; z-index: 15;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0) rotate(-40deg); opacity: 0; }
+      80% { transform: scale(1.2) rotate(8deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .fruit::before { content: ''; position: absolute; top: -5px; left: 50%; width: 3px; height: 7px; background: #5D4037; transform: translateX(-50%); border-radius: 2px; }
+    .fruit::after { content: '🍃'; position: absolute; top: -7px; left: 50%; font-size: 10px; transform: translateX(5px); }
+    .fruit.dragging {
+      transform: scale(1.45) rotate(12deg); cursor: grabbing;
+      z-index: 200; box-shadow: 0 12px 22px rgba(0,0,0,0.35); opacity: 0.9;
+    }
 
-  .fly-star{position:fixed;pointer-events:none;z-index:160;font-size:1.4rem;transition:all .6s cubic-bezier(.2,.8,.3,1);}
+    .check-btn {
+      background: linear-gradient(135deg, #26C6DA, #00ACC1); color: white;
+      border: none; padding: 14px 32px; font-size: 1.3rem; font-weight: bold;
+      border-radius: 50px; box-shadow: 0 6px 0 #00838F, 0 8px 20px rgba(0,172,193,0.35);
+      cursor: pointer; transition: all 0.15s; z-index: 20;
+      width: 80%; max-width: 330px; letter-spacing: 2px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .check-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #00838F; }
 
-  @media (prefers-reduced-motion:reduce){
-    *{animation-duration:.001s !important; animation-iteration-count:1 !important;}
-  }
-  @media (max-width:360px){
-    .tree-leaves{width:104px;height:104px;}
-    .apple{width:26px;height:26px;}
-    .check-btn{width:66px;height:66px;}
-  }
-</style>
+    /* رسائل */
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.45); z-index: 250; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .overlay.active { opacity: 1; pointer-events: auto; }
+    .message-box {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+      background: white; border-radius: 28px; padding: 28px 32px;
+      text-align: center; z-index: 260; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      font-weight: bold; font-size: 1.5rem; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .message-box.show { transform: translate(-50%, -50%) scale(1); }
+    .spark {
+      position: fixed; pointer-events: none; z-index: 300;
+      animation: sparkUp 0.7s ease-out forwards;
+    }
+    @keyframes sparkUp {
+      0% { transform: translate(0,0) scale(0); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(1.3); opacity: 0; }
+    }
+
+    @media (max-width: 380px) {
+      .leaves { width: 115px; height: 115px; bottom: 70px; }
+      .fruit { width: 24px; height: 24px; }
+    }
+  </style>
 </head>
 <body>
+<div class="sky-element sun"></div>
+<div class="sky-element cloud cloud1"></div>
+<div class="sky-element cloud cloud2"></div>
+<div class="sky-element bird" style="top:10%; left:20%;">🐦</div>
+<div class="sky-element bird" style="top:13%; left:60%; animation-delay:1.8s;">🐦</div>
 
-  <div class="sun"></div>
-  <div class="cloud cloud1"></div>
-  <div class="cloud cloud2"></div>
-  <div class="bird" style="top:11%;right:20%;">🐦</div>
-  <div class="bird" style="top:16%;right:48%;animation-delay:1.5s;font-size:15px;">🐦</div>
+<div class="top-bar">
+  <div class="level-pill" id="levelDisplay">🌟 المستوى ١</div>
+  <div class="score-badge"><span>⭐</span> <span id="scoreDisplay">٠</span></div>
+</div>
 
-  <header>
-    <div class="badge level"><span class="icon">🌳</span><span id="levelDigit">١</span></div>
-    <div class="badge"><span class="icon">⭐</span><span id="scoreDigit">٠</span></div>
-  </header>
-
-  <div class="math-row">
-    <div class="plate"><div class="apple-grid" id="plate1"></div></div>
-    <div class="operator" id="opSymbol">+</div>
-    <div class="plate"><div class="apple-grid" id="plate2"></div></div>
+<div class="equation-panel">
+  <div class="plate-card">
+    <div class="fruits-row" id="leftFruits"></div>
+    <div class="plate-dish"></div>
   </div>
-
-  <div class="playground">
-    <div class="tree-zone">
-      <div class="tree-leaves" id="treeLeaves"></div>
-      <div class="tree-trunk"></div>
-      <div class="basket" id="basket"><span class="basket-icon">🧺</span></div>
-    </div>
-
-    <div class="answer-zone">
-      <div class="answer-plate highlight" id="answerPlate">
-        <div class="ghost-hint" id="ghostHint">🍎</div>
-      </div>
-    </div>
-
-    <div class="guide-hand" id="guideHand">👆</div>
+  <div class="operator-sign" id="opSign">+</div>
+  <div class="plate-card">
+    <div class="fruits-row" id="rightFruits"></div>
+    <div class="plate-dish"></div>
   </div>
+</div>
 
-  <div class="mascot" id="mascot">🦊</div>
+<div class="play-area">
+  <div class="tree-section">
+    <div class="trunk"></div>
+    <div class="leaves" id="treeLeaves"></div>
+  </div>
+  <div class="answer-zone">
+    <div class="drop-plate" id="dropZone">
+      <div class="fruits-row" id="answerFruits"></div>
+      <div class="plate-dish"></div>
+    </div>
+  </div>
+</div>
 
-  <button class="check-btn" id="checkBtn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="4,13 9,18 20,6"></polyline>
-    </svg>
-  </button>
+<button class="check-btn" id="checkButton">✨ انتهيت!</button>
+
+<div class="overlay" id="overlay"></div>
+<div class="message-box" id="messageBox"></div>
 
 <script>
-(function(){
-  const arDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩','١٠','١١','١٢','١٣','١٤','١٥','١٦','١٧','١٨','١٩','٢٠'];
-  const toAr = n => arDigits[n] !== undefined ? arDigits[n] : String(n);
+  (function() {
+    // ---------- نطاق الأرقام 0-20 للعمليات (+/-) ----------
+    let level = 1;
+    let score = 0;
+    let correctResult = 0;
+    let currentOperator = '+';
+    let leftNum = 0, rightNum = 0;
 
-  const $ = id => document.getElementById(id);
-  const plate1 = $('plate1'), plate2 = $('plate2'), opSymbol = $('opSymbol');
-  const treeLeaves = $('treeLeaves'), basket = $('basket'), answerPlate = $('answerPlate');
-  const ghostHint = $('ghostHint'), guideHand = $('guideHand'), mascot = $('mascot');
-  const checkBtn = $('checkBtn'), levelDigit = $('levelDigit'), scoreDigit = $('scoreDigit');
+    // عناصر
+    const leftFruitsEl = document.getElementById('leftFruits');
+    const rightFruitsEl = document.getElementById('rightFruits');
+    const treeLeavesEl = document.getElementById('treeLeaves');
+    const answerFruitsEl = document.getElementById('answerFruits');
+    const dropZone = document.getElementById('dropZone');
+    const opSign = document.getElementById('opSign');
+    const levelDisplay = document.getElementById('levelDisplay');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const checkBtn = document.getElementById('checkButton');
+    const overlay = document.getElementById('overlay');
+    const messageBox = document.getElementById('messageBox');
 
-  let state = { level:1, score:0, num1:0, num2:0, op:'+', answer:0, firstTimeHint:true };
-  let audioCtx = null;
-
-  /* ---------------- audio ---------------- */
-  function ensureAudio(){
-    if(!audioCtx){
-      try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return; }
+    // أصوات باستخدام Web Audio (نغمات خفيفة)
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
     }
-    if(audioCtx.state === 'suspended') audioCtx.resume();
-  }
-  function tone(freq, start, dur, type, vol){
-    if(!audioCtx) return;
-    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-    o.type = type || 'sine'; o.frequency.value = freq;
-    const t0 = audioCtx.currentTime + start;
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.linearRampToValueAtTime(vol||0.16, t0+0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(t0); o.stop(t0+dur+0.02);
-  }
-  function playPop(){ tone(520,0,0.09,'triangle',0.12); }
-  function playCorrect(){ tone(523,0,0.14,'sine',0.15); tone(659,0.12,0.16,'sine',0.15); tone(784,0.24,0.28,'sine',0.16); }
-  function playWrong(){ tone(300,0,0.14,'sine',0.12); tone(220,0.13,0.22,'sine',0.11); }
-
-  /* ---------------- helpers ---------------- */
-  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-
-  function pickProblem(level){
-    const maxSum = Math.min(6 + level*2, 20);
-    const isAdd = level <= 2 ? true : Math.random() > 0.4;
-    let num1, num2, answer, op;
-    if(isAdd){
-      op = '+';
-      answer = randInt(2, maxSum);
-      num1 = randInt(1, answer-1);
-      num2 = answer - num1;
-    } else {
-      op = '-';
-      num1 = randInt(2, maxSum);
-      num2 = randInt(level < 4 ? 1 : 0, num1 - 1);
-      answer = num1 - num2;
+    function playTone(freq, type = 'sine', duration = 0.15) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
-    return {op, num1, num2, answer};
-  }
 
-  function appleSize(count){
-    if(count <= 6) return 24;
-    if(count <= 12) return 18;
-    return 14;
-  }
-
-  function fillPlate(container, count, removeStyle){
-    container.innerHTML = '';
-    const size = appleSize(count);
-    for(let i=0;i<count;i++){
-      const d = document.createElement('div');
-      d.className = 'mini-apple' + (removeStyle ? ' remove' : '');
-      d.style.width = size+'px';
-      d.style.height = size+'px';
-      container.appendChild(d);
+    function toArabic(num) {
+      const digits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩','١٠','١١','١٢','١٣','١٤','١٥','١٦','١٧','١٨','١٩','٢٠'];
+      return digits[num] || num;
     }
-  }
 
-  function newProblem(){
-    const p = pickProblem(state.level);
-    state.num1 = p.num1; state.num2 = p.num2; state.op = p.op; state.answer = p.answer;
-    opSymbol.textContent = p.op;
-    fillPlate(plate1, p.num1, false);
-    fillPlate(plate2, p.num2, p.op === '-');
-    answerPlate.querySelectorAll('.apple').forEach(a => a.remove());
-    basket.querySelectorAll('.apple').forEach(a => a.remove());
-    updateGhostHint();
-  }
-
-  function updateGhostHint(){
-    const count = answerPlate.querySelectorAll('.apple').length;
-    ghostHint.style.display = count === 0 ? 'flex' : 'none';
-    guideHand.style.display = (count === 0 && state.firstTimeHint) ? 'block' : 'none';
-  }
-
-  function updateBadges(){
-    levelDigit.textContent = toAr(state.level);
-    scoreDigit.textContent = toAr(state.score);
-  }
-
-  function setMascot(kind){
-    mascot.classList.remove('bounce','wobble');
-    if(kind === 'happy'){ mascot.textContent = '🦊'; void mascot.offsetWidth; mascot.classList.add('bounce'); }
-    else if(kind === 'sad'){ mascot.textContent = '🙈'; void mascot.offsetWidth; mascot.classList.add('wobble'); setTimeout(()=> mascot.textContent='🦊', 900); }
-    else { mascot.textContent = '🦊'; }
-  }
-
-  function sparkleBurst(x, y, count){
-    const emojis = ['✨','⭐','💫','🌟'];
-    for(let i=0;i<(count||8);i++){
-      setTimeout(()=>{
-        const s = document.createElement('span');
-        s.className = 'sparkle';
-        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-        s.style.left = x+'px'; s.style.top = y+'px';
-        s.style.fontSize = (Math.random()*18+14)+'px';
-        s.style.setProperty('--dx', (Math.random()*90-45)+'px');
-        s.style.setProperty('--dy', (Math.random()*-90-20)+'px');
-        document.body.appendChild(s);
-        setTimeout(()=> s.remove(), 800);
-      }, i*50);
+    // رسائل
+    function showMessage(text, emoji, duration = 1400) {
+      messageBox.innerHTML = `<span style="font-size:3.2rem;">${emoji}</span><br>${text}`;
+      messageBox.classList.add('show');
+      overlay.classList.add('active');
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+        overlay.classList.remove('active');
+      }, duration);
     }
-  }
 
-  function flyStarToScore(){
-    const from = answerPlate.getBoundingClientRect();
-    const to = scoreDigit.getBoundingClientRect();
-    const star = document.createElement('div');
-    star.className = 'fly-star';
-    star.textContent = '⭐';
-    star.style.left = (from.left + from.width/2) + 'px';
-    star.style.top = (from.top + from.height/2) + 'px';
-    document.body.appendChild(star);
-    requestAnimationFrame(()=>{
-      star.style.left = (to.left + to.width/2) + 'px';
-      star.style.top = (to.top + to.height/2) + 'px';
-      star.style.transform = 'scale(.3)';
-      star.style.opacity = '0.2';
-    });
-    setTimeout(()=> star.remove(), 650);
-  }
-
-  /* ---------------- spawning apples in basket ---------------- */
-  function spawnTreeApple(){
-    if(basket.querySelectorAll('.apple').length >= 8){
-      treeLeaves.classList.remove('shake'); void treeLeaves.offsetWidth; treeLeaves.classList.add('shake');
-      return;
+    function spawnSparks(x, y, count = 7) {
+      const icons = ['✨','⭐','💫','🌟','💖'];
+      for (let i=0; i<count; i++) {
+        setTimeout(() => {
+          const s = document.createElement('span');
+          s.className = 'spark';
+          s.textContent = icons[Math.floor(Math.random()*icons.length)];
+          s.style.left = x + 'px'; s.style.top = y + 'px';
+          s.style.fontSize = (Math.random()*18+14)+'px';
+          s.style.setProperty('--dx', (Math.random()*70-35)+'px');
+          s.style.setProperty('--dy', (Math.random()*-70-15)+'px');
+          document.body.appendChild(s);
+          setTimeout(() => s.remove(), 700);
+        }, i*50);
+      }
     }
-    ensureAudio();
-    const apple = createDraggableApple('tree');
-    basket.appendChild(apple);
-    playPop();
-  }
 
-  /* ---------------- drag logic ---------------- */
-  let dragState = null;
+    // إنشاء فاكهة
+    function createFruit() {
+      const f = document.createElement('div');
+      f.className = 'fruit';
+      f.setAttribute('data-fruit', 'true');
+      return f;
+    }
 
-  function createDraggableApple(origin){
-    const el = document.createElement('div');
-    el.className = 'apple';
-    el.addEventListener('pointerdown', (e)=> startDrag(e, el, origin));
-    return el;
-  }
+    // ملء الفاكهة
+    function fillFruits(container, count) {
+      container.innerHTML = '';
+      for (let i=0; i<count; i++) {
+        const fruit = createFruit();
+        container.appendChild(fruit);
+      }
+    }
 
-  function startDrag(e, apple, origin){
-    e.preventDefault();
-    ensureAudio();
-    const rect = apple.getBoundingClientRect();
-    dragState = {
-      apple, origin,
-      startX: e.clientX, startY: e.clientY,
-      offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top,
-      origParent: apple.parentElement, origNext: apple.nextSibling,
-      moved: false
-    };
-    apple.classList.add('dragging');
-    apple.style.position = 'fixed';
-    apple.style.left = rect.left+'px'; apple.style.top = rect.top+'px';
-    apple.style.width = rect.width+'px'; apple.style.height = rect.height+'px';
-    apple.style.zIndex = 999;
-    document.body.appendChild(apple);
-    try{ apple.setPointerCapture(e.pointerId); }catch(err){}
-    apple.addEventListener('pointermove', onDragMove);
-    apple.addEventListener('pointerup', onDragEnd);
-    apple.addEventListener('pointercancel', onDragEnd);
-  }
+    // إعادة تعيين منطقة الإجابة
+    function resetAnswerZone() {
+      answerFruitsEl.innerHTML = '';
+    }
 
-  function onDragMove(e){
-    if(!dragState) return;
-    const dx = e.clientX - dragState.startX, dy = e.clientY - dragState.startY;
-    if(Math.abs(dx) > 4 || Math.abs(dy) > 4) dragState.moved = true;
- 
+    // تجهيز الشجرة (مخزون الفاكهة للسحب)
+    function populateTree(count) {
+      treeLeavesEl.innerHTML = '';
+      for (let i=0; i<count; i++) {
+        const fruit = createFruit();
+        fruit.style.position = 'static';
+        fruit.style.margin = '2px';
+        treeLeavesEl.appendChild(fruit);
+      }
+    }
+
+    // توليد مسألة (نتيجتها بين 0 و 20)
+    function generateProblem() {
+      let n1, n2, op, result;
+      // تدرج الصعوبة
+      let maxVal = Math.min(5 + level, 12); 
+      if (level <= 2) {
+        op = '+';
+      } else {
+        op = Math.random() > 0.35 ? '+' : '-';
+      }
+      
+      if (op === '+') {
+        n1 = Math.floor(Math.random() * maxVal) + 1;
+        n2 = Math.floor(Math.random() * (Math.min(20 - n1, maxVal))) + 1;
+        result = n1 + n2;
+      } else {
+        n1 = Math.floor(Math.random() * maxVal) + 1;
+        n2 = Math.floor(Math.random() * (n1 + 1)); // لا سالب
+        result = n1 - n2;
+      }
+      
+      // ضمان ضمن 0-20
+      if (result < 0) result = 0;
+      if (result > 20) {
+        if (op === '+') n2 = 20 - n1;
+        else n2 = n1;
+        result = op === '+' ? n1+n2 : n1-n2;
+      }
+      
+      leftNum = n1;
+      rightNum = n2;
+      correctResult = result;
+      currentOperator = op;
+      
+      opSign.textContent = op;
+      fillFruits(leftFruitsEl, n1);
+      fillFruits(rightFruitsEl, n2);
+      resetAnswerZone();
+      
+      // كمية الفاكهة في الشجرة = النتيجة الصحيحة + بعض الاحتياط
+      let treeStock = Math.min(result + 4, 22);
+      populateTree(treeStock);
+      
+      levelDisplay.textContent = `🌟 المستوى ${toArabic(level)}`;
+      scoreDisplay.textContent = toArabic(score);
+      
+      // تأثير تنشيط منطقة الإفلات
+      dropZone.classList.add('active-drop');
+      setTimeout(() => dropZone.classList.remove('active-drop'), 2000);
+    }
+
+    // التحقق من الإجابة
+    function verifyAnswer() {
+      const answerCount = answerFruitsEl.children.length;
+      if (answerCount === correctResult) {
+        // صحيح
+        playTone(523.25, 'sine', 0.2);
+        setTimeout(() => playTone(659.25, 'sine', 0.2), 200);
+        const rect = checkBtn.getBoundingClientRect();
+        spawnSparks(rect.left + rect.width/2, rect.top);
+        showMessage('إجابة صحيحة! 🎉', '🏆');
+        score++;
+        level++;
+        generateProblem();
+      } else {
+        // خطأ
+        playTone(200, 'triangle', 0.3);
+        showMessage(`حاول مرة أخرى! لديك ${toArabic(answerCount)} تفاحة`, '🤔', 1800);
+        // اهتزاز خفيف
+        dropZone.style.transform = 'translateX(6px)';
+        setTimeout(() => { dropZone.style.transform = 'translateX(-6px)'; }, 100);
+        setTimeout(() => { dropZone.style.transform = ''; }, 200);
+      }
+    }
+
+    // ========== السحب والإفلات ==========
+    let draggedItem = null;
+    let startX = 0, startY = 0;
+    let isDragging = false;
+
+    function onDragStart(e) {
+      initAudio();
+      const target = e.target.closest('.fruit');
+      if (!target || target.closest('#leftFruits') || target.closest('#rightFruits')) return;
+      
+      // مسموح بالسحب فقط من الشجرة أو من طبق الإجابة
+      if (!target.closest('#treeLeaves') && !target.closest('#answerFruits')) return;
+      
+      e.preventDefault();
+      draggedItem = target;
+      const touch = e.touches ? e.touches[0] : e;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      isDragging = false;
+      
+      draggedItem.classList.add('dragging');
+      playTone(440, 'sine', 0.08);
+    }
+
+    function onDragMove(e) {
+      if (!draggedItem) return;
+      e.preventDefault();
+      const touch = e.touches ? e.touches[0] : e;
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        isDragging = true;
+      }
+      if (isDragging) {
+        draggedItem.style.position = 'fixed';
+        draggedItem.style.left = touch.clientX - 15 + 'px';
+        draggedItem.style.top = touch.clientY - 15 + 'px';
+        draggedItem.style.zIndex = '200';
+        
+        // تمييز منطقة الإفلات
+        const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (elemBelow && (elemBelow.closest('#dropZone') || elemBelow.closest('#answerFruits'))) {
+          dropZone.classList.add('active-drop');
+        } else {
+          dropZone.classList.remove('active-drop');
+        }
+      }
+    }
+
+    function onDragEnd(e) {
+      if (!draggedItem) return;
+      const touch = e.changedTouches ? e.changedTouches[0] : e;
+      const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+      
+      draggedItem.classList.remove('dragging');
+      draggedItem.style.position = '';
+      draggedItem.style.left = '';
+      draggedItem.style.top = '';
+      draggedItem.style.zIndex = '';
+      
+      if (isDragging && elemBelow && (elemBelow.closest('#dropZone') || elemBelow.closest('#answerFruits'))) {
+        // وضع في طبق الإجابة
+        answerFruitsEl.appendChild(draggedItem);
+        playTone(600, 'sine', 0.1);
+        if (answerFruitsEl.children.length > 15) {
+          // تذكير بصري
+          dropZone.style.borderColor = '#FF7043';
+          setTimeout(() => dropZone.style.borderColor = '', 400);
+        }
+      } else if (isDragging && elemBelow && elemBelow.closest('#treeLeaves')) {
+        // إعادته للشجرة
+        treeLeavesEl.appendChild(draggedItem);
+      } else if (draggedItem.parentNode === answerFruitsEl) {
+        // إذا كان في الإجابة وسحب خارجاً يعود للشجرة
+        treeLeavesEl.appendChild(draggedItem);
+      }
+      
+      dropZone.classList.remove('active-drop');
+      draggedItem = null;
+      isDragging = false;
+    }
+
+    // ربط الأحداث
+    document.addEventListener('touchstart', onDragStart, {passive: false});
+    document.addEventListener('touchmove', onDragMove, {passive: false});
+    document.addEventListener('touchend', onDragEnd);
+    document.addEventListener('mousedown', onDragStart);
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup', onDragEnd);
+
+    checkBtn.addEventListener('click', verifyAnswer);
+    
+    // بداية اللعبة
+    generateProblem();
+  })();
+</script>
+</body>
+</html>
