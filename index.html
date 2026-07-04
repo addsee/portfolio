@@ -2,125 +2,591 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>معرض مشاريعي التفاعلية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>مختبر الإبداع التفاعلي | معرض المشاريع</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+    
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
+    :root {
+      --primary: #00ffcc;
+      --primary-dark: #00cc99;
+      --secondary: #7c4dff;
+      --accent: #ff4081;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+    }
+
     body {
-      background: #0d1117;
-      color: #ffffff;
-      font-family: system-ui, -apple-system, sans-serif;
-      padding: 20px;
+      background: #0a0a0f;
+      color: var(--text-primary);
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    header {
+
+    /* ============ الخلفية المتحركة ============ */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-gradient {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+      animation: floatGradient 20s ease-in-out infinite;
+    }
+
+    .bg-gradient:nth-child(1) {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 255, 204, 0.4), transparent 70%);
+      top: -200px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-gradient:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(124, 77, 255, 0.3), transparent 70%);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -7s;
+    }
+
+    .bg-gradient:nth-child(3) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 64, 129, 0.2), transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -14s;
+    }
+
+    @keyframes floatGradient {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(100px, -50px) scale(1.1); }
+      50% { transform: translate(-50px, 100px) scale(0.9); }
+      75% { transform: translate(-100px, -100px) scale(1.05); }
+    }
+
+    /* ============ شبكة النقاط ============ */
+    .dot-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ============ الحاوية الرئيسية ============ */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============ الهيدر ============ */
+    .header {
       text-align: center;
-      margin-bottom: 30px;
-      padding: 20px 0;
+      padding: 30px 20px 20px;
+      position: relative;
     }
-    header h1 {
-      font-size: 1.8rem;
-      color: #00ffcc;
+
+    .header-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      display: inline-block;
+      animation: floatIcon 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(0, 255, 204, 0.4));
+    }
+
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .header h1 {
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #00ffcc, #7c4dff, #ff4081);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 6s ease infinite;
       margin-bottom: 8px;
+      line-height: 1.3;
     }
-    header p {
-      color: #8b949e;
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 200% center; }
+    }
+
+    .header .subtitle {
+      color: var(--text-secondary);
       font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
     }
-    .grid {
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      border-radius: 2px;
+    }
+
+    /* ============ شبكة الكروت ============ */
+    .cards-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 20px;
-      max-width: 500px;
-      margin: 0 auto;
+      gap: 16px;
+      margin-top: 30px;
+      flex: 1;
     }
+
+    /* ============ الكارت الأساسي ============ */
     .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 16px;
-      padding: 20px;
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 24px;
       text-decoration: none;
       color: inherit;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      transition: transform 0.2s, border-color 0.2s;
-      -webkit-tap-highlight-color: transparent; /* إيقاف وميض اللمس في الهواتف */
+      gap: 12px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: hidden;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: var(--glass-shadow);
     }
+
+    /* تأثير التوهج عند التحويم */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.03),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+
+    .card:hover::before,
+    .card:active::before {
+      left: 100%;
+    }
+
+    /* توهج حدود الكارت */
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 24px;
+      padding: 1px;
+      background: linear-gradient(
+        135deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 60%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .card:hover::after,
+    .card:active::after {
+      opacity: 1;
+    }
+
     .card:active {
-      transform: scale(0.98);
-      border-color: #00ffcc;
+      transform: scale(0.96);
+      transition: transform 0.15s ease;
     }
-    .card-icon {
-      font-size: 2rem;
+
+    /* ============ محتوى الكارت ============ */
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+
+    .card-emoji {
+      font-size: 2.5rem;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 18px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-emoji,
+    .card:active .card-emoji {
+      transform: rotate(-10deg) scale(1.1);
+    }
+
+    .card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
     .card-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #f0f6fc;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
     }
+
     .card-desc {
-      font-size: 0.9rem;
-      color: #8b949e;
-      line-height: 1.4;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      opacity: 0.8;
     }
-    .card-badge {
-      align-self: flex-start;
-      background: rgba(0, 255, 204, 0.1);
-      color: #00ffcc;
-      padding: 4px 12px;
+
+    /* البادج */
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
       border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .badge-visual {
+      background: rgba(0, 255, 204, 0.1);
+      border: 1px solid rgba(0, 255, 204, 0.2);
+      color: #00ffcc;
+    }
+
+    .badge-game {
+      background: rgba(124, 77, 255, 0.1);
+      border: 1px solid rgba(124, 77, 255, 0.2);
+      color: #b388ff;
+    }
+
+    .badge-educational {
+      background: rgba(255, 64, 129, 0.1);
+      border: 1px solid rgba(255, 64, 129, 0.2);
+      color: #ff80ab;
+    }
+
+    .badge-system {
+      background: rgba(255, 171, 64, 0.1);
+      border: 1px solid rgba(255, 171, 64, 0.2);
+      color: #ffab40;
+    }
+
+    /* ============ تأثير اللمعان على الكروت ============ */
+    .card-shine {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 24px;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(
+        circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 255, 255, 0.06) 0%,
+        transparent 60%
+      );
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover .card-shine,
+    .card:active .card-shine {
+      opacity: 1;
+    }
+
+    /* ============ الفوتر ============ */
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      color: var(--text-secondary);
       font-size: 0.8rem;
-      font-weight: 500;
+      opacity: 0.5;
+    }
+
+    .footer-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--primary);
+      border-radius: 50%;
+      margin: 0 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* ============ تحسينات للموبايل ============ */
+    @media (max-width: 400px) {
+      .app-container {
+        padding: 12px 10px 30px;
+      }
+      
+      .card {
+        padding: 18px;
+        border-radius: 20px;
+      }
+      
+      .card-emoji {
+        font-size: 2rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+      }
+      
+      .header h1 {
+        font-size: 1.4rem;
+      }
+      
+      .header-icon {
+        font-size: 2.8rem;
+      }
+    }
+
+    /* دعم الوضع المظلم دائماً */
+    @media (prefers-color-scheme: light) {
+      body {
+        background: #0a0a0f;
+      }
+    }
+
+    /* تحسين إمكانية الوصول */
+    @media (prefers-reduced-motion: reduce) {
+      .bg-gradient,
+      .header-icon,
+      .card,
+      .card-emoji {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>✨ مختبر الإبداع التفاعلي</h1>
-    <p>تجارب برمجية ممتعة ومخصصة للهاتف</p>
-  </header>
+  <!-- الخلفية الديناميكية -->
+  <div class="bg-animation">
+    <div class="bg-gradient"></div>
+    <div class="bg-gradient"></div>
+    <div class="bg-gradient"></div>
+  </div>
+  <div class="dot-grid"></div>
 
-  <main class="grid">
+  <!-- التطبيق -->
+  <div class="app-container">
     
-    <!-- كارد المشروع الأول -->
-    <a href="dust.html" class="card">
-      <div class="card-icon">✨</div>
-      <div class="card-title">تشكيل الغبار المضيء</div>
-      <div class="card-desc">اكتب اسمك وشاهده يتشكل من ذرات النجوم المضيئة مع مؤثرات حركية عند اللمس.</div>
-      <div class="card-badge">بصري</div>
-    </a>
+    <!-- الهيدر -->
+    <header class="header">
+      <div class="header-icon">🚀</div>
+      <h1>مختبر الإبداع التفاعلي</h1>
+      <p class="subtitle">تجارب برمجية ممتعة · مصممة للهاتف</p>
+    </header>
 
-    <!-- كارد المشروع الثاني -->
-    <a href="angry_button.html" class="card">
-      <div class="card-icon">🌟</div>
-      <div class="card-title">المبرمج الغاضب</div>
-      <div class="card-desc">تحدي الزر الهارب! حاول الضغط عليه واستمع لتعليقات المبرمجين الساخرة المستفزة.</div>
-      <div class="card-badge">لعبة مضحكة</div>
-    </a>
+    <!-- شبكة الكروت -->
+    <main class="cards-grid">
+      
+      <!-- الكارت 1: تشكيل الغبار المضيء -->
+      <a href="dust.html" class="card" data-badge="visual">
+        <div class="card-shine"></div>
+        <div class="card-top">
+          <div class="card-emoji">✨</div>
+          <div class="card-info">
+            <div class="card-title">تشكيل الغبار المضيء</div>
+            <div class="card-desc">اكتب اسمك وشاهده يتشكل من ذرات النجوم المضيئة مع مؤثرات حركية عند اللمس.</div>
+          </div>
+        </div>
+        <div class="badge-row">
+          <span class="badge badge-visual">🎨 بصري</span>
+          <span class="badge badge-game">🖐️ تفاعلي</span>
+        </div>
+      </a>
 
-    <!-- كارد المشروع الثالث -->
-    <a href="Math_orchard.html" class="card">
-      <div class="card-icon">🤩</div>
-      <div class="card-title">لعبة تفاعليه</div>
-      <div class="card-desc">لعبة حسابية تفاعلية للأطفال</div>
-      <div class="card-badge">لعبة تعليمية</div>
-    </a>
+      <!-- الكارت 2: المبرمج الغاضب -->
+      <a href="angry_button.html" class="card" data-badge="game">
+        <div class="card-shine"></div>
+        <div class="card-top">
+          <div class="card-emoji">🌟</div>
+          <div class="card-info">
+            <div class="card-title">المبرمج الغاضب</div>
+            <div class="card-desc">تحدي الزر الهارب! حاول الضغط عليه واستمع لتعليقات المبرمجين الساخرة المستفزة.</div>
+          </div>
+        </div>
+        <div class="badge-row">
+          <span class="badge badge-game">🎮 لعبة مضحكة</span>
+        </div>
+      </a>
 
-    <!-- كارد المشروع الرابع -->
-    <a href="Electric_lab.html" class="card">
-      <div class="card-icon">⚡</div>
-      <div class="card-title">نظام كهربائي تفاعلي</div>
-      <div class="card-desc">نظام كهربائي واقعي للتعامل مع الادوات الكهربائية</div>
-      <div class="card-badge">نظام تفاعلي</div>
-    </a>
-    
-  </main>
+      <!-- الكارت 3: لعبة الرياضيات -->
+      <a href="Math_orchard.html" class="card" data-badge="educational">
+        <div class="card-shine"></div>
+        <div class="card-top">
+          <div class="card-emoji">🤩</div>
+          <div class="card-info">
+            <div class="card-title">بستان الرياضيات</div>
+            <div class="card-desc">لعبة حسابية تفاعلية للأطفال تساعد في تعلم الجمع والطرح بطريقة ممتعة وجذابة.</div>
+          </div>
+        </div>
+        <div class="badge-row">
+          <span class="badge badge-educational">📚 تعليمية</span>
+          <span class="badge badge-game">👶 للأطفال</span>
+        </div>
+      </a>
+
+      <!-- الكارت 4: النظام الكهربائي -->
+      <a href="Electric_lab.html" class="card" data-badge="system">
+        <div class="card-shine"></div>
+        <div class="card-top">
+          <div class="card-emoji">⚡</div>
+          <div class="card-info">
+            <div class="card-title">معمل الكهرباء التفاعلي</div>
+            <div class="card-desc">نظام كهربائي واقعي لمحاكاة الدوائر الكهربائية والتعامل مع الأدوات الكهربائية بشكل آمن.</div>
+          </div>
+        </div>
+        <div class="badge-row">
+          <span class="badge badge-system">🔧 نظام تفاعلي</span>
+          <span class="badge badge-visual">🎯 محاكاة</span>
+        </div>
+      </a>
+
+    </main>
+
+    <!-- الفوتر -->
+    <footer class="footer">
+      <span class="footer-dot"></span>
+      صنع بحب للبرمجة والإبداع
+      <span class="footer-dot"></span>
+    </footer>
+
+  </div>
+
+  <!-- سكريبت تأثير اللمعان التفاعلي -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.card');
+      
+      cards.forEach(card => {
+        // تأثير تتبع الماوس/اللمس للتوهج
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          card.style.setProperty('--mouse-x', `${x}%`);
+          card.style.setProperty('--mouse-y', `${y}%`);
+        });
+
+        // دعم اللمس
+        card.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          const rect = card.getBoundingClientRect();
+          const touch = e.touches[0];
+          const x = ((touch.clientX - rect.left) / rect.width) * 100;
+          const y = ((touch.clientY - rect.top) / rect.height) * 100;
+          card.style.setProperty('--mouse-x', `${x}%`);
+          card.style.setProperty('--mouse-y', `${y}%`);
+        }, { passive: false });
+
+        // إعادة تعيين موضع التوهج عند الخروج
+        card.addEventListener('mouseleave', () => {
+          card.style.setProperty('--mouse-x', '50%');
+          card.style.setProperty('--mouse-y', '50%');
+        });
+
+        card.addEventListener('touchend', () => {
+          card.style.setProperty('--mouse-x', '50%');
+          card.style.setProperty('--mouse-y', '50%');
+        });
+      });
+
+      // تأثير اهتزاز بسيط عند الضغط على الكارت (للموبايل)
+      if (window.navigator && window.navigator.vibrate) {
+        cards.forEach(card => {
+          card.addEventListener('touchstart', () => {
+            window.navigator.vibrate(10);
+          }, { passive: true });
+        });
+      }
+    });
+  </script>
 
 </body>
 </html>
