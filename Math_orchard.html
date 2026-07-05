@@ -68,12 +68,8 @@
             will-change: transform;
         }
         @keyframes sunPulse {
-            0% {
-                transform: scale(1);
-            }
-            100% {
-                transform: scale(1.08);
-            }
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
         }
         .rainbow {
             position: absolute;
@@ -89,9 +85,7 @@
             z-index: 1;
             pointer-events: none;
         }
-        .rainbow.show {
-            opacity: 0.3;
-        }
+        .rainbow.show { opacity: 0.3; }
         .cloud {
             position: absolute;
             background: rgba(255, 255, 255, 0.85);
@@ -114,18 +108,14 @@
             left: 10%;
             animation: floatCloud 12s infinite ease-in-out;
         }
-        .cloud1::before {
-            width: 45px;
+        .cloud1::before { width: 45px;
             height: 45px;
             top: -24px;
-            left: 18px;
-        }
-        .cloud1::after {
-            width: 55px;
+            left: 18px; }
+        .cloud1::after { width: 55px;
             height: 50px;
             top: -28px;
-            left: 40px;
-        }
+            left: 40px; }
         .cloud2 {
             width: 70px;
             height: 26px;
@@ -133,32 +123,20 @@
             right: 16%;
             animation: floatCloud 14s infinite ease-in-out reverse;
         }
-        .cloud2::before {
-            width: 35px;
+        .cloud2::before { width: 35px;
             height: 35px;
             top: -18px;
-            left: 14px;
-        }
-        .cloud2::after {
-            width: 40px;
+            left: 14px; }
+        .cloud2::after { width: 40px;
             height: 38px;
             top: -22px;
-            left: 30px;
-        }
+            left: 30px; }
         @keyframes floatCloud {
             0%,
-            100% {
-                transform: translateX(0) translateY(0);
-            }
-            30% {
-                transform: translateX(25px) translateY(-5px);
-            }
-            60% {
-                transform: translateX(45px) translateY(2px);
-            }
-            85% {
-                transform: translateX(15px) translateY(-2px);
-            }
+            100% { transform: translateX(0) translateY(0); }
+            30% { transform: translateX(25px) translateY(-5px); }
+            60% { transform: translateX(45px) translateY(2px); }
+            85% { transform: translateX(15px) translateY(-2px); }
         }
         .birds-container {
             position: absolute;
@@ -172,32 +150,18 @@
             display: inline-block;
             animation: birdFlap 0.5s infinite alternate ease-in-out;
         }
-        .bird-emoji:nth-child(2) {
-            animation-delay: 0.15s;
-            margin-left: -3px;
-        }
+        .bird-emoji:nth-child(2) { animation-delay: 0.15s;
+            margin-left: -3px; }
         @keyframes birdFlap {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-            100% {
-                transform: translateY(-8px) rotate(4deg);
-            }
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-8px) rotate(4deg); }
         }
         @keyframes birdsFly {
             0%,
-            100% {
-                transform: translate(0, 0);
-            }
-            35% {
-                transform: translate(40px, -18px);
-            }
-            65% {
-                transform: translate(70px, -6px);
-            }
-            90% {
-                transform: translate(25px, -12px);
-            }
+            100% { transform: translate(0, 0); }
+            35% { transform: translate(40px, -18px); }
+            65% { transform: translate(70px, -6px); }
+            90% { transform: translate(25px, -12px); }
         }
 
         .ground-details {
@@ -221,12 +185,8 @@
         }
         @keyframes swayGrass {
             0%,
-            100% {
-                transform: rotate(-2deg);
-            }
-            50% {
-                transform: rotate(2deg);
-            }
+            100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
         }
         .flower {
             position: absolute;
@@ -236,12 +196,8 @@
         }
         @keyframes swayFlower {
             0%,
-            100% {
-                transform: rotate(-4deg);
-            }
-            50% {
-                transform: rotate(4deg);
-            }
+            100% { transform: rotate(-4deg); }
+            50% { transform: rotate(4deg); }
         }
 
         .top-bar {
@@ -391,12 +347,8 @@
             will-change: transform;
         }
         @keyframes bounceOp {
-            0% {
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                transform: translateY(-8px) scale(1.08);
-            }
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-8px) scale(1.08); }
         }
 
         .play-area {
@@ -451,15 +403,9 @@
         }
         @keyframes swayTree {
             0%,
-            100% {
-                transform: translateX(-50%) rotate(0deg);
-            }
-            30% {
-                transform: translateX(-50%) rotate(2.5deg);
-            }
-            65% {
-                transform: translateX(-50%) rotate(-2deg);
-            }
+            100% { transform: translateX(-50%) rotate(0deg); }
+            30% { transform: translateX(-50%) rotate(2.5deg); }
+            65% { transform: translateX(-50%) rotate(-2deg); }
         }
         .tree-hint {
             position: absolute;
@@ -477,9 +423,7 @@
             transition: opacity 0.3s;
             white-space: nowrap;
         }
-        .tree-hint.visible {
-            opacity: 1;
-        }
+        .tree-hint.visible { opacity: 1; }
 
         .answer-zone {
             width: 52%;
@@ -490,19 +434,7 @@
             justify-content: flex-end;
             position: relative;
         }
-        .target-indicator {
-            position: absolute;
-            top: -12px;
-            background: #FF7043;
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 12px;
-            z-index: 12;
-            box-shadow: 0 2px 8px rgba(255, 112, 67, 0.35);
-            white-space: nowrap;
-        }
+        /* تم حذف target-indicator من HTML و CSS */
         .drop-plate {
             width: 92%;
             min-height: 100px;
@@ -517,7 +449,7 @@
             padding: 6px 6px 12px;
             margin-bottom: 4px;
             box-shadow: inset 0 0 20px rgba(56, 142, 60, 0.1), var(--shadow-sm);
-            transition: all 0.25s ease;
+            transition: all 0.3s ease;
             overflow: visible;
         }
         .drop-plate.active-drop {
@@ -535,29 +467,28 @@
         .drop-plate.shake {
             animation: plateShake 0.4s ease-out;
         }
+        /* تلميح الطبق الممتلئ بصرياً */
+        .drop-plate.perfect-hint {
+            border-color: #66BB6A;
+            border-style: solid;
+            background: rgba(200, 255, 200, 0.45);
+            box-shadow: 0 0 0 8px rgba(76, 175, 80, 0.15), inset 0 0 30px rgba(76, 175, 80, 0.1);
+            animation: perfectPulse 1.5s infinite ease-in-out;
+        }
+        @keyframes perfectPulse {
+            0%,
+            100% { box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.12); }
+            50% { box-shadow: 0 0 0 14px rgba(76, 175, 80, 0.06); }
+        }
         @keyframes plateShake {
             0%,
-            100% {
-                transform: translateX(0);
-            }
-            15% {
-                transform: translateX(-6px);
-            }
-            30% {
-                transform: translateX(6px);
-            }
-            45% {
-                transform: translateX(-4px);
-            }
-            60% {
-                transform: translateX(4px);
-            }
-            75% {
-                transform: translateX(-2px);
-            }
-            90% {
-                transform: translateX(2px);
-            }
+            100% { transform: translateX(0); }
+            15% { transform: translateX(-6px); }
+            30% { transform: translateX(6px); }
+            45% { transform: translateX(-4px); }
+            60% { transform: translateX(4px); }
+            75% { transform: translateX(-2px); }
+            90% { transform: translateX(2px); }
         }
 
         .fruit {
@@ -576,33 +507,17 @@
             justify-content: center;
             will-change: transform;
         }
-        .fruit.fruit-red {
-            background: radial-gradient(circle at 35% 32%, #FF8A80, #F44336 65%, #B71C1C 100%);
-        }
-        .fruit.fruit-orange {
-            background: radial-gradient(circle at 35% 32%, #FFCC80, #FF9800 65%, #E65100 100%);
-        }
-        .fruit.fruit-yellow {
-            background: radial-gradient(circle at 35% 32%, #FFF9C4, #FFEB3B 65%, #F9A825 100%);
-        }
-        .fruit.fruit-green {
-            background: radial-gradient(circle at 35% 32%, #A5D6A7, #4CAF50 65%, #1B5E20 100%);
-        }
-        .fruit.fruit-purple {
-            background: radial-gradient(circle at 35% 32%, #CE93D8, #9C27B0 65%, #4A148C 100%);
-        }
+        .fruit.fruit-red { background: radial-gradient(circle at 35% 32%, #FF8A80, #F44336 65%, #B71C1C 100%); }
+        .fruit.fruit-orange { background: radial-gradient(circle at 35% 32%, #FFCC80, #FF9800 65%, #E65100 100%); }
+        .fruit.fruit-yellow { background: radial-gradient(circle at 35% 32%, #FFF9C4, #FFEB3B 65%, #F9A825 100%); }
+        .fruit.fruit-green { background: radial-gradient(circle at 35% 32%, #A5D6A7, #4CAF50 65%, #1B5E20 100%); }
+        .fruit.fruit-purple { background: radial-gradient(circle at 35% 32%, #CE93D8, #9C27B0 65%, #4A148C 100%); }
         @keyframes fruitPopIn {
-            0% {
-                transform: scale(0) rotate(-40deg);
-                opacity: 0;
-            }
-            60% {
-                transform: scale(1.2) rotate(8deg);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-            }
+            0% { transform: scale(0) rotate(-40deg);
+                opacity: 0; }
+            60% { transform: scale(1.2) rotate(8deg);
+                opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); }
         }
         .fruit::before {
             content: '';
@@ -626,9 +541,7 @@
             z-index: 3;
             pointer-events: none;
         }
-        .fruit:active {
-            transform: scale(0.9);
-        }
+        .fruit:active { transform: scale(0.9); }
         .fruit.dragging {
             transform: scale(1.35) rotate(10deg);
             cursor: grabbing;
@@ -637,48 +550,24 @@
             opacity: 0.9;
             transition: none;
         }
-        .fruit.bounce-in {
-            animation: bounceDrop 0.45s ease;
-        }
+        .fruit.bounce-in { animation: bounceDrop 0.45s ease; }
         @keyframes bounceDrop {
-            0% {
-                transform: scale(0.3) translateY(-25px);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.15) translateY(-4px);
-                opacity: 1;
-            }
-            70% {
-                transform: scale(0.9) translateY(2px);
-            }
-            100% {
-                transform: scale(1) translateY(0);
-            }
+            0% { transform: scale(0.3) translateY(-25px);
+                opacity: 0; }
+            50% { transform: scale(1.15) translateY(-4px);
+                opacity: 1; }
+            70% { transform: scale(0.9) translateY(2px); }
+            100% { transform: scale(1) translateY(0); }
         }
-        .fruit.wobble {
-            animation: wobbleFruit 0.5s ease-out;
-        }
+        .fruit.wobble { animation: wobbleFruit 0.5s ease-out; }
         @keyframes wobbleFruit {
             0%,
-            100% {
-                transform: rotate(0);
-            }
-            15% {
-                transform: rotate(12deg);
-            }
-            30% {
-                transform: rotate(-10deg);
-            }
-            45% {
-                transform: rotate(7deg);
-            }
-            60% {
-                transform: rotate(-4deg);
-            }
-            75% {
-                transform: rotate(2deg);
-            }
+            100% { transform: rotate(0); }
+            15% { transform: rotate(12deg); }
+            30% { transform: rotate(-10deg); }
+            45% { transform: rotate(7deg); }
+            60% { transform: rotate(-4deg); }
+            75% { transform: rotate(2deg); }
         }
 
         .btn-row {
@@ -719,10 +608,8 @@
             cursor: pointer;
             white-space: nowrap;
         }
-        .hint-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #E65100;
-        }
+        .hint-btn:active { transform: translateY(3px);
+            box-shadow: 0 1px 0 #E65100; }
         .reset-btn {
             background: #90A4AE;
             color: white;
@@ -735,10 +622,8 @@
             cursor: pointer;
             white-space: nowrap;
         }
-        .reset-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #607D8B;
-        }
+        .reset-btn:active { transform: translateY(2px);
+            box-shadow: 0 1px 0 #607D8B; }
         .undo-btn {
             position: absolute;
             top: -10px;
@@ -801,64 +686,38 @@
             align-items: center;
             justify-content: center;
         }
-        .fullscreen-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .win-overlay {
-            background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.65) 0%, rgba(255, 152, 0, 0.4) 50%, rgba(0, 0, 0, 0.4) 100%);
-        }
-        .lose-overlay {
-            background: radial-gradient(ellipse at center, rgba(200, 200, 220, 0.65) 0%, rgba(150, 150, 170, 0.4) 50%, rgba(0, 0, 0, 0.4) 100%);
-        }
+        .fullscreen-overlay.active { opacity: 1;
+            pointer-events: auto; }
+        .win-overlay { background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.65) 0%, rgba(255, 152, 0, 0.4) 50%, rgba(0, 0, 0, 0.4) 100%); }
+        .lose-overlay { background: radial-gradient(ellipse at center, rgba(200, 200, 220, 0.65) 0%, rgba(150, 150, 170, 0.4) 50%, rgba(0, 0, 0, 0.4) 100%); }
         .fullscreen-content {
             text-align: center;
             animation: fullscreenBounce 0.45s ease;
             pointer-events: auto;
         }
         @keyframes fullscreenBounce {
-            0% {
-                transform: scale(0.3);
-                opacity: 0;
-            }
-            60% {
-                transform: scale(1.08);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0.3);
+                opacity: 0; }
+            60% { transform: scale(1.08);
+                opacity: 1; }
+            100% { transform: scale(1);
+                opacity: 1; }
         }
-        .win-emoji {
-            font-size: 4rem;
+        .win-emoji { font-size: 4rem;
             animation: winJump 0.5s infinite alternate ease-in-out;
-            display: block;
-        }
+            display: block; }
         @keyframes winJump {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-            100% {
-                transform: translateY(-20px) rotate(6deg);
-            }
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(6deg); }
         }
-        .lose-emoji {
-            font-size: 4rem;
+        .lose-emoji { font-size: 4rem;
             animation: loseShake 0.35s infinite;
-            display: block;
-        }
+            display: block; }
         @keyframes loseShake {
             0%,
-            100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-10px);
-            }
-            75% {
-                transform: translateX(10px);
-            }
+            100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
         .fullscreen-text {
             font-size: 1.8rem;
@@ -876,14 +735,10 @@
             animation: particleBurst 0.8s ease-out forwards;
         }
         @keyframes particleBurst {
-            0% {
-                transform: translate(0, 0) scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--px), var(--py)) scale(1.5);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) scale(0);
+                opacity: 1; }
+            100% { transform: translate(var(--px), var(--py)) scale(1.5);
+                opacity: 0; }
         }
         .confetti {
             position: fixed;
@@ -895,14 +750,10 @@
             animation: confettiFall 2s ease-in forwards;
         }
         @keyframes confettiFall {
-            0% {
-                transform: translateY(-80px) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(600deg) scale(0.2);
-                opacity: 0;
-            }
+            0% { transform: translateY(-80px) rotate(0deg) scale(1);
+                opacity: 1; }
+            100% { transform: translateY(100vh) rotate(600deg) scale(0.2);
+                opacity: 0; }
         }
 
         .mascot {
@@ -918,15 +769,9 @@
         }
         @keyframes mascotBounce {
             0%,
-            100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-15px);
-            }
-            60% {
-                transform: translateY(-4px);
-            }
+            100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-4px); }
         }
         .mascot-speech {
             position: fixed;
@@ -946,41 +791,27 @@
             white-space: nowrap;
             max-width: 160px;
         }
-        .mascot-speech.show {
-            opacity: 1;
-            transform: scale(1);
-        }
+        .mascot-speech.show { opacity: 1;
+            transform: scale(1); }
 
         @media (max-width: 400px) {
-            .leaves {
-                width: 110px;
+            .leaves { width: 110px;
                 height: 110px;
                 bottom: 55px;
-                padding: 12px;
-            }
-            .fruit {
-                width: 22px;
-                height: 22px;
-            }
-            .plate-card {
-                width: 30%;
+                padding: 12px; }
+            .fruit { width: 22px;
+                height: 22px; }
+            .plate-card { width: 30%;
                 min-width: 70px;
-                min-height: 75px;
-            }
-            .operator-sign {
-                width: 36px;
+                min-height: 75px; }
+            .operator-sign { width: 36px;
                 height: 36px;
-                font-size: 1.6rem;
-            }
-            .check-btn {
-                padding: 10px 16px;
-                font-size: 1rem;
-            }
-            .num-key {
-                width: 22px;
+                font-size: 1.6rem; }
+            .check-btn { padding: 10px 16px;
+                font-size: 1rem; }
+            .num-key { width: 22px;
                 height: 22px;
-                font-size: 0.6rem;
-            }
+                font-size: 0.6rem; }
         }
     </style>
 </head>
@@ -1026,7 +857,7 @@
             <div class="leaves" id="treeLeaves"></div>
         </div>
         <div class="answer-zone">
-            <div class="target-indicator" id="targetIndicator">🎯 المطلوب: ؟</div>
+            <!-- تم حذف target-indicator نهائياً -->
             <div class="drop-plate" id="dropZone">
                 <button class="undo-btn" id="undoBtn" title="تراجع">↩️</button>
                 <div class="fruits-row" id="answerFruits"></div>
@@ -1084,7 +915,6 @@
             const undoBtn = document.getElementById('undoBtn');
             const hintBtn = document.getElementById('hintBtn');
             const resetBtn = document.getElementById('resetBtn');
-            const targetIndicator = document.getElementById('targetIndicator');
             const treeHint = document.getElementById('treeHint');
             const winOverlay = document.getElementById('winOverlay');
             const loseOverlay = document.getElementById('loseOverlay');
@@ -1164,6 +994,23 @@
                     playSoundEffect('star');
                     score++;
                     scoreDisplay.textContent = toArabic(score);
+                }
+            }
+
+            // تحديث حالة الطبق بصرياً فقط (بدون أرقام)
+            function updatePlateVisual() {
+                fruitsPlacedInAnswer = answerFruitsEl.children.length;
+                // إزالة التأثير إذا كان موجوداً
+                dropZone.classList.remove('perfect-hint');
+                // إذا كان العدد صحيحاً (سيتم التحقق منه فقط عند الضغط على تحقق)
+                // لكن نعطي تلميحاً بسيطاً جداً: الطبق يلمع قليلاً إذا كان فيه فواكه
+                if (fruitsPlacedInAnswer > 0 && fruitsPlacedInAnswer <= 20) {
+                    dropZone.style.borderColor = '#66BB6A';
+                    dropZone.style.backgroundColor = 'rgba(200, 255, 200, 0.25)';
+                } else if (fruitsPlacedInAnswer === 0) {
+                    dropZone.style.borderColor = '#43A047';
+                    dropZone.style.backgroundColor = 'rgba(255, 255, 255, 0.55)';
+                    dropZone.style.borderStyle = 'dashed';
                 }
             }
 
@@ -1269,30 +1116,19 @@
                         fruit.style.transform = 'scale(1) rotate(0deg)';
                         fruit.style.transition = 'transform 0.35s ease, opacity 0.2s ease';
                         fruit.style.animation = 'none';
-                        if (container === answerFruitsEl) updateAnswerCount();
+                        if (container === answerFruitsEl) updatePlateVisual();
                     }, delayMs * index + 40);
                 });
-            }
-
-            function updateAnswerCount() {
-                fruitsPlacedInAnswer = answerFruitsEl.children.length;
-                targetIndicator.textContent =
-                    `🎯 المطلوب: ${toArabic(correctResult)} | لديك: ${toArabic(fruitsPlacedInAnswer)}`;
-                if (fruitsPlacedInAnswer === correctResult && correctResult > 0) {
-                    targetIndicator.style.background = '#4CAF50';
-                } else if (fruitsPlacedInAnswer > correctResult) {
-                    targetIndicator.style.background = '#F44336';
-                } else {
-                    targetIndicator.style.background = '#FF7043';
-                }
             }
 
             function resetAnswerZone() {
                 answerFruitsEl.innerHTML = '';
                 fruitsPlacedInAnswer = 0;
                 movesCount = 0;
-                targetIndicator.textContent = `🎯 المطلوب: ${toArabic(correctResult)} | لديك: ٠`;
-                targetIndicator.style.background = '#FF7043';
+                dropZone.classList.remove('perfect-hint');
+                dropZone.style.borderColor = '#43A047';
+                dropZone.style.backgroundColor = 'rgba(255, 255, 255, 0.55)';
+                dropZone.style.borderStyle = 'dashed';
             }
 
             function populateTree(count) {
@@ -1330,6 +1166,7 @@
                             }
                         }
                         playSoundEffect('drop');
+                        updatePlateVisual();
                     });
                     numberPad.appendChild(key);
                 }
@@ -1376,8 +1213,6 @@
                 scoreDisplay.textContent = toArabic(score);
                 updateStreak();
                 updateStars();
-                targetIndicator.textContent = `🎯 المطلوب: ${toArabic(correctResult)} | لديك: ٠`;
-                targetIndicator.style.background = '#FF7043';
                 treeHint.classList.add('visible');
                 setTimeout(() => treeHint.classList.remove('visible'), 2500);
                 showMascotSpeech(currentOperator === '+' ? 'اجمع الفواكه! 🍎' : 'اطرح الفواكه! 🍏');
@@ -1398,9 +1233,13 @@
                 setTimeout(() => fruitElement.classList.remove('bounce-in'), 450);
                 playSoundEffect('drop');
                 movesCount++;
-                updateAnswerCount();
+                updatePlateVisual();
                 dropZone.classList.add('active-drop');
                 setTimeout(() => dropZone.classList.remove('active-drop'), 600);
+                // تلميح بسيط من المساعد إذا كان الطبق يبدو ممتلئاً
+                if (answerFruitsEl.children.length > 3 && answerFruitsEl.children.length <= correctResult) {
+                    // لا نقول شيئاً محدداً، فقط نشجع
+                }
             }
 
             function returnFruitToTree(fruitElement) {
@@ -1413,7 +1252,7 @@
                 setTimeout(() => fruitElement.classList.remove('wobble'), 500);
                 playSoundEffect('undo');
                 movesCount++;
-                updateAnswerCount();
+                updatePlateVisual();
             }
 
             function undoLastFruit() {
@@ -1435,10 +1274,14 @@
                     updateStreak();
                     updateStars();
                     scoreDisplay.textContent = toArabic(score);
-                    showWinScreen();
-                    setTimeout(() => { hideFullscreen();
-                        level++;
-                        generateProblem(); }, 1800);
+                    dropZone.classList.add('perfect-hint');
+                    showMascotSpeech('يبدو الطبق ممتلئاً! تحقق الآن ✨');
+                    setTimeout(() => {
+                        showWinScreen();
+                        setTimeout(() => { hideFullscreen();
+                            level++;
+                            generateProblem(); }, 1800);
+                    }, 600);
                 } else {
                     streak = 0;
                     updateStreak();
@@ -1464,7 +1307,7 @@
                     for (let i = 0; i < Math.min(Math.abs(diff), 3); i++) { undoLastFruit(); }
                 }
                 showMascotSpeech('هذا تلميح 💡 (خصم نقطة)');
-                updateAnswerCount();
+                updatePlateVisual();
             }
 
             let draggedItem = null,
