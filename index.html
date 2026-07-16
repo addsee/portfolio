@@ -103,7 +103,6 @@
             }
         }
 
-        /* ============ شبكة النقاط ============ */
         .dot-grid {
             position: fixed;
             top: 0;
@@ -117,7 +116,6 @@
             background-size: 42px 42px;
         }
 
-        /* ============ الحاوية الرئيسية ============ */
         .app-container {
             position: relative;
             z-index: 1;
@@ -146,7 +144,6 @@
             flex-shrink: 0;
         }
 
-        /* حلقات التوهج حول الصورة */
         .avatar-glow-ring {
             position: absolute;
             inset: -8px;
@@ -195,7 +192,6 @@
             }
         }
 
-        /* نبضة متوهجة خلف الصورة */
         .avatar-pulse {
             position: absolute;
             inset: -14px;
@@ -236,7 +232,6 @@
             transform: scale(1.04);
         }
 
-        /* اسم المصمم */
         .profile-brand {
             font-family: 'El Messiri', 'Cairo', sans-serif;
             font-size: 1.3rem;
@@ -344,7 +339,6 @@
             flex: 1;
         }
 
-        /* ============ الكارت الأساسي ============ */
         .card {
             position: relative;
             background: var(--glass-bg);
@@ -627,7 +621,6 @@
             transition: transform 0.12s ease;
         }
 
-        /* فيسبوك */
         .link-facebook {
             background: rgba(24, 119, 242, 0.15);
             border-color: rgba(24, 119, 242, 0.3);
@@ -640,7 +633,6 @@
             box-shadow: 0 0 25px rgba(24, 119, 242, 0.4);
         }
 
-        /* تيك توك */
         .link-tiktok {
             background: rgba(0, 0, 0, 0.4);
             border-color: rgba(255, 255, 255, 0.25);
@@ -653,7 +645,6 @@
             box-shadow: 0 0 25px rgba(255, 64, 129, 0.35), 0 0 40px rgba(0, 255, 204, 0.2);
         }
 
-        /* هاتف */
         .link-phone {
             background: rgba(0, 255, 204, 0.1);
             border-color: rgba(0, 255, 204, 0.25);
@@ -688,7 +679,6 @@
             line-height: 1.2;
         }
 
-        /* ============ الفوتر السفلي ============ */
         .footer-credit {
             text-align: center;
             margin-top: 16px;
@@ -720,7 +710,6 @@
             }
         }
 
-        /* ============ تحسينات للموبايل ============ */
         @media (max-width: 400px) {
             .app-container {
                 padding: 10px 8px 24px;
@@ -784,7 +773,6 @@
 </head>
 <body>
 
-    <!-- الخلفية الديناميكية -->
     <div class="bg-animation">
         <div class="bg-gradient"></div>
         <div class="bg-gradient"></div>
@@ -792,7 +780,6 @@
     </div>
     <div class="dot-grid"></div>
 
-    <!-- التطبيق -->
     <div class="app-container">
 
         <!-- قسم البروفايل العلوي -->
@@ -805,21 +792,18 @@
                 <img src="profile.png" alt="مهند سليمان" class="profile-avatar" loading="eager">
             </div>
             <div class="profile-brand">لمسات إبداعية</div>
-            <div class="profile-subtitle"> مهند سليمان </div>
+            <div class="profile-subtitle">بوراسطة ✦ مهند سليمان</div>
             <div class="profile-divider"></div>
         </section>
 
-        <!-- الهيدر -->
         <header class="header">
             <div class="header-icon">🚀</div>
             <h1>مختبر الإبداع التفاعلي</h1>
             <p class="subtitle">تجارب برمجية ممتعة · مصممة للهاتف</p>
         </header>
 
-        <!-- شبكة الكروت -->
         <main class="cards-grid">
 
-            <!-- الكارت 1: تشكيل الغبار المضيء -->
             <a href="dust.html" class="card" data-badge="visual">
                 <div class="card-shine"></div>
                 <div class="card-top">
@@ -835,7 +819,6 @@
                 </div>
             </a>
 
-            <!-- الكارت 2: المبرمج الغاضب -->
             <a href="angry_button.html" class="card" data-badge="game">
                 <div class="card-shine"></div>
                 <div class="card-top">
@@ -850,7 +833,6 @@
                 </div>
             </a>
 
-            <!-- الكارت 3: لعبة الرياضيات -->
             <a href="Math_orchard.html" class="card" data-badge="educational">
                 <div class="card-shine"></div>
                 <div class="card-top">
@@ -866,7 +848,6 @@
                 </div>
             </a>
 
-            <!-- الكارت 4: النظام الكهربائي -->
             <a href="Electric_lab.html" class="card" data-badge="system">
                 <div class="card-shine"></div>
                 <div class="card-top">
@@ -884,11 +865,9 @@
 
         </main>
 
-        <!-- فوتر التواصل الاجتماعي -->
         <footer class="contact-footer">
             <div class="contact-title">📬 تواصل مع المصمم</div>
             <div class="contact-links">
-                <!-- فيسبوك -->
                 <a href="https://www.facebook.com/share/14hx61tqXpy/" target="_blank" rel="noopener noreferrer" class="contact-link link-facebook">
                     <span class="contact-icon">📘</span>
                     <div class="contact-info-stack">
@@ -896,7 +875,6 @@
                         <span class="contact-value">صفحتي</span>
                     </div>
                 </a>
-                <!-- تيك توك -->
                 <a href="https://tiktok.com/@hno.sd" target="_blank" rel="noopener noreferrer" class="contact-link link-tiktok">
                     <span class="contact-icon">🎵</span>
                     <div class="contact-info-stack">
@@ -904,7 +882,6 @@
                         <span class="contact-value">@hno.sd</span>
                     </div>
                 </a>
-                <!-- هاتف -->
                 <a href="tel:+249900062246" class="contact-link link-phone">
                     <span class="contact-icon">📞</span>
                     <div class="contact-info-stack">
@@ -915,7 +892,6 @@
             </div>
         </footer>
 
-        <!-- الفوتر السفلي -->
         <div class="footer-credit">
             <span class="footer-dot"></span>
             صنع بحب للبرمجة والإبداع
@@ -924,12 +900,12 @@
 
     </div>
 
-    <!-- سكريبت تأثير اللمعان التفاعلي -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.card');
 
             cards.forEach(card => {
+                // للماوس
                 card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
                     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -938,20 +914,39 @@
                     card.style.setProperty('--mouse-y', `${y}%`);
                 });
 
-                card.addEventListener('touchmove', (e) => {
-                    e.preventDefault();
-                    const rect = card.getBoundingClientRect();
-                    const touch = e.touches[0];
-                    const x = ((touch.clientX - rect.left) / rect.width) * 100;
-                    const y = ((touch.clientY - rect.top) / rect.height) * 100;
-                    card.style.setProperty('--mouse-x', `${x}%`);
-                    card.style.setProperty('--mouse-y', `${y}%`);
-                }, { passive: false });
-
                 card.addEventListener('mouseleave', () => {
                     card.style.setProperty('--mouse-x', '50%');
                     card.style.setProperty('--mouse-y', '50%');
                 });
+
+                // للمس - معالجة ذكية للسماح بالتمرير العمودي
+                let startX = 0, startY = 0;
+
+                card.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
+                    startX = touch.clientX;
+                    startY = touch.clientY;
+                    // لا نمنع الافتراضي هنا للسماح بالتمرير
+                }, { passive: true });
+
+                card.addEventListener('touchmove', (e) => {
+                    const touch = e.touches[0];
+                    const deltaX = Math.abs(touch.clientX - startX);
+                    const deltaY = Math.abs(touch.clientY - startY);
+
+                    // تحديث موضع التوهج دائماً
+                    const rect = card.getBoundingClientRect();
+                    const x = ((touch.clientX - rect.left) / rect.width) * 100;
+                    const y = ((touch.clientY - rect.top) / rect.height) * 100;
+                    card.style.setProperty('--mouse-x', `${x}%`);
+                    card.style.setProperty('--mouse-y', `${y}%`);
+
+                    // نمنع التمرير الافتراضي فقط إذا كان السحب أفقياً بشكل واضح (لحماية السحب الجانبي)
+                    // إذا كان السحب عمودياً، لا نمنع الافتراضي => يسمح بتمرير الصفحة
+                    if (deltaX > deltaY && deltaX > 10) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
 
                 card.addEventListener('touchend', () => {
                     card.style.setProperty('--mouse-x', '50%');
@@ -959,6 +954,7 @@
                 });
             });
 
+            // اهتزاز بسيط عند الضغط (اختياري)
             if (window.navigator && window.navigator.vibrate) {
                 cards.forEach(card => {
                     card.addEventListener('touchstart', () => {
